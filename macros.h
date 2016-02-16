@@ -26,6 +26,12 @@ typedef unsigned char bool;
 #define CNTL_STATE_INDEX        (3)
 #define false                   (0)
 #define true                    (1)
+#define UINT_16_MAX             (0xFFFF)
+#define PI                      (3.1415) // PI
+
+
+// Helper macros
+#define DIG_TO_CH(D)            ((D)+0x30) // Converts a digit to an ASCII char               
 
 // LCD
 #define LCD_HOME_L1	        (0x80)
@@ -33,6 +39,7 @@ typedef unsigned char bool;
 #define LCD_HOME_L3         	(0xC0)
 #define LCD_HOME_L4         	(0xE0)
 #define LCD_BASE                (0x00)
+#define NULL_TERM               (0x00)
 
 //Timeing Values
 #define FALSE                   (0x00)
@@ -107,7 +114,7 @@ typedef unsigned char bool;
 #define GPIO_OUT                (0xFF) // Value for full Port GPIO output
 
 //pwm things
-#define NUM_A_TIMERS             7     // Number of timer registers on Timer A
+#define NUM_A_TIMERS            (7)    // Number of timer registers on Timer A
 #define TIMER_A0                (0x00) // Timer A0
 #define TIMER_A1                (0x01) // Timer A1
 #define TIMER_A2                (0x02) // Timer A2
@@ -119,16 +126,25 @@ typedef unsigned char bool;
 
 // Motor constants
 #define MOTOR_ADJ_FAC           (0.955f) // Left motor compensation 
+#define MAX_SPEED               (PWM_RES)
+
+// Shape Constants
+#define NUM_SHAPES              (5)    // Number of possible shapes
+#define INCREMENT               (1)    // Shape counter increment
+#define DIR_LEFT                (0x01) // Port side
+#define DIR_RIGHT               (0x01) // Starboard side
 
 //Switch things
 #define SW_1                    (0x01) // Switch 1
 #define SW_2                    (0x02) // Switch 2
-#define TA1_CLK_F               (1000000) // Timer A0 frequency in hz
-#define ONE_MSEC                (1000)    // Number of msec in a second
+#define TA1_CLK_F               (10000)// Timer A0 frequency in hz
+#define ONE_MSEC                (1000) // Number of msec in a second
+#define PRESSED_DEBOUNCE        (25)   // Debounce time for switch press
+#define RELEASED_DEBOUNCE       (300)  // Debounce time for switch press
 
 //Timer things
-#define TA_CTL_BASE             TA0CTL
-#define TA_CCR0_BASE            TA0CCR0
+#define TA_CTL_BASE             (TA0CTL)
+#define TA_CCR0_BASE            (TA0CCR0)
 #define TIMER_STOP              (0x0030) //Stop mask for timer       Bits 5-4 11
 #define TIMER_UP                (0x0010) //Continuous mask for timer Bits 5-4 01
 #define TIMER_CONTINUOUS        (0x0020) //Continuous mask for timer Bits 5-4 10

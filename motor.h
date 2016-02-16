@@ -7,6 +7,7 @@
 // Function Declarations
     void right_forward(void);
     void left_forward(void);
+    void turn_on_motor(u_int8);
     void turn_off_motor(u_int8);
     void set_motor_speed(u_int8, int);
 //------------------------------------------------------------------------------

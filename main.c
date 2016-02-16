@@ -56,7 +56,7 @@ void main(void){
   Init_LCD();  
   setup_sw_debounce();
   
-  WDTCTL = WDTPW + WDTHOLD;
+  //WDTCTL = WDTPW + WDTHOLD;
   
   setup_pwm();
   
@@ -106,7 +106,7 @@ while(ALWAYS) {                            // Can the Operating system run
       if(size_count > SIZE_CHANGE_TIME){
         size_count = FALSE;
         if(big){
-          lcd_BIG_mid();
+          //lcd_BIG_mid();
           big = FALSE;
         }else{
           lcd_4line();
@@ -117,7 +117,7 @@ while(ALWAYS) {                            // Can the Operating system run
       break;                                // 
     default: break; 
   }
-  //Switches_Process();                       // Check for switch state change 
+  Switches_Process();                       // Check for switch state change 
   if(Time_Sequence > SECOND_AND_A_QUARTER){
     Time_Sequence = START_VAL;
   }
@@ -159,13 +159,13 @@ void setup_pwm()
 #pragma vector = TIMER1_B1_VECTOR
 __interrupt void timer_B1_CCR0_interupt(void)
 {
-  TB1CTL &= ~TAxCTL_IFG;        // clears the interupt flag
+  TB1CCTL1 &= ~TAxCTL_IFG;        // clears the interupt flag
 }
 
 #pragma vector = TIMER2_B1_VECTOR
 __interrupt void timer_B2_CCR0_interupt(void)
 {
-  TB2CTL &= ~TAxCTL_IFG;        // clears the interupt flag
+  TB2CCTL1 &= ~TAxCTL_IFG;        // clears the interupt flag
 }
 
 

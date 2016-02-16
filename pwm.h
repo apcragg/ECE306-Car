@@ -10,6 +10,8 @@
     void set_pwm_value(unsigned short volatile*, unsigned int);
     void set_pwm_output(unsigned short volatile*);
     void start_pwm(unsigned short volatile*);
+    void disable_pwm(unsigned short volatile*);
+    void enable_pwm(unsigned short volatile*);
 //------------------------------------------------------------------------------
 
 #endif
