@@ -4,6 +4,7 @@ ehthumbs.db
 
 #other stuff
 Debug/
+Release/
 settings/
 
 # Folder config file
