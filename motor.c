@@ -1,8 +1,11 @@
 //============================================================================//
 // File Name : motor.c
 //
-// Description: This file contains the motor control functions
-//
+// Description: This file contains the motor control functions. This assumes
+//              R_FORWARD is on a pin with TB1.1
+//              L_FORWARD is on a pin with TB2.1
+//              R_REVERSE is on a pin with TB1.2
+//              L_FORWARD is on a pin with TB2.2
 // Author: Andrew Cragg
 // Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)

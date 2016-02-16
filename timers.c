@@ -3,8 +3,8 @@
 //
 // Description: This file contains the timer information and control functions
 //
-// Author: Andrew Cragg
-// Date: Feb 2016
+// Author: Jim Carlson
+// Date: Jan 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //============================================================================//
 
@@ -28,8 +28,8 @@
 // Arguements: void
 // Returns:    void
 //
-// Author: Andrew Cragg
-// Date: Feb 2016
+// Author: Jim Carlson
+// Date: Jan 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
 void Init_Timers(void){
@@ -52,8 +52,8 @@ void Init_Timers(void){
 // Arguements: unsigned int fivemsec
 // Returns:    void
 //
-// Author: Andrew Cragg
-// Date: Feb 2016
+// Author: Jim Carlson
+// Date: Jan 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
 void five_msec_sleep(unsigned int fivemsec){
@@ -72,8 +72,8 @@ void five_msec_sleep(unsigned int fivemsec){
 // Arguements: void
 // Returns:    void
 //
-// Author: Andrew Cragg
-// Date: Feb 2016
+// Author: Jim Carlson
+// Date: Jan 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
 void Timer_code(void){

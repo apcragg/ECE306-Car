@@ -56,7 +56,7 @@ void main(void){
   Init_LCD();  
   setup_sw_debounce();
   
-  //WDTCTL = WDTPW + WDTHOLD;
+  WDTCTL = WDTPW + WDTHOLD;
   
   setup_pwm();
   
