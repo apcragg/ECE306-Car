@@ -4,7 +4,7 @@
 //============================================================================//
 // File Name : macros.h
 //
-// Description: This file contains he macro define defentions 
+// Description: This file contains he macro define defentions
 //
 // Author: Andrew Cragg
 // Date: Feb 2016
@@ -31,7 +31,7 @@ typedef unsigned char bool;
 
 
 // Helper macros
-#define DIG_TO_CH(D)            ((D)+0x30) // Converts a digit to an ASCII char               
+#define DIG_TO_CH(D)            ((D)+0x30) // Converts a digit to an ASCII char
 
 // LCD
 #define LCD_HOME_L1	        (0x80)
@@ -125,14 +125,19 @@ typedef unsigned char bool;
 #define PWM_RES                 (4096) // PWM resolution
 
 // Motor constants
-#define MOTOR_ADJ_FAC           (0.955f) // Left motor compensation 
+#define MOTOR_ADJ_FAC           (0.955f) // Left motor compensation
 #define MAX_SPEED               (PWM_RES)
+#define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 
 // Shape Constants
-#define NUM_SHAPES              (5)    // Number of possible shapes
+#define NUM_SHAPES              (6)    // Number of possible shapes
 #define INCREMENT               (1)    // Shape counter increment
-#define DIR_LEFT                (0x01) // Port side
+#define DIR_LEFT                (0x00) // Port side
 #define DIR_RIGHT               (0x01) // Starboard side
+#define NUM_TRI_PTS             (3)    // Number of points in a triangle
+#define R_LEN_COMP              (1.30f)// Right motor durration compensation
+#define BATT_COMP               (4.99f / 4.88f) // current battery level
+#define UN_COMP                 (1.0f) // No adjustment compensation factor
 
 //Switch things
 #define SW_1                    (0x01) // Switch 1
@@ -156,7 +161,7 @@ typedef unsigned char bool;
 #define OUTMOD_RES_SET          (0x0070) // Outmod Reset/Set mode
 #define OUTMOD_SET_RES          (0x0030) // Outmod Set/Reset mode
 #define OUTMOD_TOGGLE           (0x0040) // Outmod toggle
-#define TIMER_DIVIDE            (0x00C0) // Timer division 
+#define TIMER_DIVIDE            (0x00C0) // Timer division
 #define TAxCTL_IFG              (0x0001) // Timer CTL interupt flag
 #define Px_IFG                  (0x0001) // Port interrupt flag
 

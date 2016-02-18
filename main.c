@@ -60,8 +60,8 @@ void main(void){
   
   setup_pwm();
   
-  set_motor_speed(R_FORWARD, 4096);
-  set_motor_speed(L_FORWARD, 4096);
+  set_motor_speed(R_FORWARD, PWM_RES);
+  set_motor_speed(L_FORWARD, PWM_RES);
   
 //             1234567890
   display_1 = "NCSU";
@@ -146,7 +146,7 @@ void setup_pwm()
     init_pwm(&TB2CTL);
   
     set_pwm_resolution(&TB2CCR0, PWM_RES);
-    set_pwm_value(&TB2CCR1, 2048);
+    set_pwm_value(&TB2CCR1, PWM_RES / 2);
     set_pwm_output(&TB2CCTL1);
     
     P3DIR |= L_FORWARD;
