@@ -113,6 +113,10 @@ typedef unsigned char bool;
 #define GPIO_IN                 (0x00) // Value for full Port GPIO input
 #define GPIO_OUT                (0xFF) // Value for full Port GPIO output
 
+//------------------------------------------------------------------------------
+// Other macros
+//------------------------------------------------------------------------------
+
 //pwm things
 #define NUM_A_TIMERS            (7)    // Number of timer registers on Timer A
 #define TIMER_A0                (0x00) // Timer A0

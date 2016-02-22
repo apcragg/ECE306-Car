@@ -127,13 +127,12 @@ while(ALWAYS) {                            // Can the Operating system run
 }
 
 void setup_pwm()
-{
-  
+{ 
     // R_FORWARD on P3.4
     init_pwm(&TB1CTL);
   
     set_pwm_resolution(&TB1CCR0, PWM_RES);
-    set_pwm_value(&TB1CCR1, 2048);
+    set_pwm_value(&TB1CCR1, PWM_RES / 2);
     set_pwm_output(&TB1CCTL1);
     
     P3DIR |= R_FORWARD;
@@ -154,18 +153,21 @@ void setup_pwm()
     P3SEL1 &= ~L_FORWARD;   
     
     start_pwm(&TB2CTL);
+    
+    // R_REVERSE on P3.5  
+    set_pwm_value(&TB1CCR2, PWM_RES / 2);
+    set_pwm_output(&TB1CCTL2);
+    
+    P3DIR |= R_REVERSE;
+    P3SEL0 |= R_REVERSE;
+    P3SEL1 &= ~R_REVERSE;   
+    
+    // L_REVERSE on P3.7 
+    set_pwm_value(&TB2CCR2, PWM_RES / 2);
+    set_pwm_output(&TB2CCTL2);
+    
+    P3DIR |= L_REVERSE;
+    P3SEL0 |= L_REVERSE;
+    P3SEL1 &= ~L_REVERSE;   
 }
-
-#pragma vector = TIMER1_B1_VECTOR
-__interrupt void timer_B1_CCR0_interupt(void)
-{
-  TB1CCTL1 &= ~TAxCTL_IFG;        // clears the interupt flag
-}
-
-#pragma vector = TIMER2_B1_VECTOR
-__interrupt void timer_B2_CCR0_interupt(void)
-{
-  TB2CCTL1 &= ~TAxCTL_IFG;        // clears the interupt flag
-}
-
 

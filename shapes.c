@@ -39,8 +39,8 @@ void handle_input(u_int8 sw_pressed_mask, u_int8 sw_pressed_count)
     {
       case 0: break;
       case 1:
-        turn_on_motor(R_FORWARD);
-        turn_on_motor(L_FORWARD);
+        turn_on_motor(R_REVERSE);
+        turn_on_motor(L_REVERSE);
         break;
       case 2:
         go_circle(2, DIR_LEFT, 1.0f, 1.1f);

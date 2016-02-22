@@ -160,11 +160,8 @@ void setup_sw_debounce(void)
 #pragma vector = PORT4_VECTOR
 __interrupt void SW_PRESSED_ISR(void)
 {
- 
-  u_int8 current_ifg = P4IV >> 1;           // not exactly safe. If ISR 
-                                        // interrupted by another ISR both
-                                        // will be cleared if happens before
-                                        // the first copy 
+  u_int8 current_ifg = P4IV >> 1;       // Shifts port interrupt label to
+                                        // format used by SW_1 / SW_2
   
   P4IE &= ~(current_ifg);               // Port interrupts turned off
   
@@ -184,22 +181,8 @@ __interrupt void SW_PRESSED_ISR(void)
             (temp_edge & current_ifg ? PRESSED_DEBOUNCE : RELEASED_DEBOUNCE))) 
             % UINT_16_MAX;
   
-  TA1CCTL1 |= CCIE;
   TA1CCTL1 &= ~CCIFG;
+  TA1CCTL1 |= CCIE;
 
   P4IFG &= ~current_ifg;                
-}
-
-#pragma vector = TIMER1_A1_VECTOR
-__interrupt void timer_A1_CCR1_interupt(void)
-{
-  TA1CCTL1 &= ~CCIFG;                   // clears the interupt flag
-  TA1CCTL1 &= ~CCIE;
-  P4IE |= SW_1 | SW_2; 
-}
-
-#pragma vector = TIMER1_A0_VECTOR
-__interrupt void timer_A1_CTL_interupt(void)
-{
-  TA1CTL &= ~CCIFG;                   // clears the interupt flag
 }

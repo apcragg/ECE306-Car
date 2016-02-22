@@ -73,8 +73,10 @@ void turn_on_motor(u_int8 motor)
 {
   switch(motor)
   {                  
-    case R_FORWARD: enable_pwm(&TB1CCTL1); break;
-    case L_FORWARD: enable_pwm(&TB2CCTL1); break;
+    case R_FORWARD: disable_pwm(&TB1CCTL2); enable_pwm(&TB1CCTL1); break;
+    case L_FORWARD: disable_pwm(&TB2CCTL2); enable_pwm(&TB2CCTL1); break;
+    case R_REVERSE: disable_pwm(&TB1CCTL1); enable_pwm(&TB1CCTL2); break;
+    case L_REVERSE: disable_pwm(&TB2CCTL1); enable_pwm(&TB2CCTL2); break;
   }
 }
 
@@ -95,6 +97,8 @@ void turn_off_motor(u_int8 motor)
   {                  
     case R_FORWARD: disable_pwm(&TB1CCTL1); P3OUT &= ~motor; break;
     case L_FORWARD: disable_pwm(&TB2CCTL1); P3OUT &= ~motor; break;
+    case R_REVERSE: disable_pwm(&TB1CCTL2); P3OUT &= ~motor; break;
+    case L_REVERSE: disable_pwm(&TB2CCTL2); P3OUT &= ~motor; break;
   }
 }
 

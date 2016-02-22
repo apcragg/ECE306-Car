@@ -1967,6 +1967,9 @@
     <name>$PROJ_DIR$\display.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\interrupts.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\LCD.r43</name>
   </file>
   <file>
