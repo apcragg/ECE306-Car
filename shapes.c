@@ -30,6 +30,8 @@ void handle_input(u_int8 sw_pressed_mask, u_int8 sw_pressed_count)
     is_running = FALSE;
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
+    turn_off_motor(R_REVERSE);
+    turn_off_motor(L_REVERSE);
   }
   else
   {
@@ -39,8 +41,7 @@ void handle_input(u_int8 sw_pressed_mask, u_int8 sw_pressed_count)
     {
       case 0: break;
       case 1:
-        turn_on_motor(R_REVERSE);
-        turn_on_motor(L_REVERSE);
+        go_back_and_forth();
         break;
       case 2:
         go_circle(2, DIR_LEFT, 1.0f, 1.1f);
@@ -196,6 +197,98 @@ void go_triangle(u_int8 num_triangles, u_int8 direction,
   }
 
   is_running = FALSE;
+}
+
+
+//------------------------------------------------------------------------------
+// Function Name : go_back_and_forth
+//
+// Description: This function drives the car in the way presribed by project 4
+// Arguements: void
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: Feb 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+void go_back_and_forth(void)
+{
+    five_msec_sleep(65);
+  
+    set_motor_speed(R_FORWARD, MAX_SPEED);
+    set_motor_speed(L_FORWARD, MAX_SPEED);
+    set_motor_speed(R_REVERSE, MAX_SPEED);
+    set_motor_speed(L_REVERSE, MAX_SPEED);
+  
+    // Forward 1 sec
+    display_3 = "Forward";
+    Display_Process();
+    
+    turn_on_motor(R_FORWARD);
+    turn_on_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    turn_off_motor(R_FORWARD);
+    turn_off_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    // Reverse 2 sec
+    display_3 = "Reverse";
+    Display_Process();
+    
+    turn_on_motor(R_REVERSE);
+    turn_on_motor(L_REVERSE);
+    
+    five_msec_sleep(130);
+    
+    turn_off_motor(R_REVERSE);
+    turn_off_motor(L_REVERSE);
+    
+    five_msec_sleep(65);
+    
+    // Forward 1 sec
+    display_3 = "Forward";
+    Display_Process();
+    
+    turn_on_motor(R_FORWARD);
+    turn_on_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    turn_off_motor(R_FORWARD);
+    turn_off_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    // Clockwise 1 sec
+    display_3 = "Clockwise";
+    Display_Process();
+    
+    turn_on_motor(R_REVERSE);
+    turn_on_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    turn_off_motor(R_REVERSE);
+    turn_off_motor(L_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    // Counterclockwise 1 sec
+    display_3 = "Counterclk";
+    Display_Process();
+    
+    turn_on_motor(L_REVERSE);
+    turn_on_motor(R_FORWARD);
+    
+    five_msec_sleep(65);
+    
+    turn_off_motor(L_REVERSE);
+    turn_off_motor(R_FORWARD);
+    
+    five_msec_sleep(65);
 }
 
 

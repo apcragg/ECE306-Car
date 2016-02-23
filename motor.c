@@ -73,10 +73,10 @@ void turn_on_motor(u_int8 motor)
 {
   switch(motor)
   {                  
-    case R_FORWARD: disable_pwm(&TB1CCTL2); enable_pwm(&TB1CCTL1); break;
-    case L_FORWARD: disable_pwm(&TB2CCTL2); enable_pwm(&TB2CCTL1); break;
-    case R_REVERSE: disable_pwm(&TB1CCTL1); enable_pwm(&TB1CCTL2); break;
-    case L_REVERSE: disable_pwm(&TB2CCTL1); enable_pwm(&TB2CCTL2); break;
+    case R_FORWARD: turn_off_motor(R_REVERSE); enable_pwm(&TB1CCTL1); break;
+    case L_FORWARD: turn_off_motor(L_REVERSE); enable_pwm(&TB2CCTL1); break;
+    case R_REVERSE: turn_off_motor(R_FORWARD); enable_pwm(&TB1CCTL2); break;
+    case L_REVERSE: turn_off_motor(L_FORWARD); enable_pwm(&TB2CCTL2); break;
   }
 }
 
@@ -121,6 +121,11 @@ void set_motor_speed(u_int8 motor, int motor_speed)
   {                  // compensates for slow motor I have
     case R_FORWARD: 
       set_pwm_value(&TB1CCR1, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
-    case L_FORWARD: set_pwm_value(&TB2CCR1, PWM_RES - motor_speed); break;
+    case L_FORWARD: 
+      set_pwm_value(&TB2CCR1, PWM_RES - motor_speed); break;
+     case R_REVERSE: 
+      set_pwm_value(&TB1CCR2, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
+    case L_REVERSE: 
+      set_pwm_value(&TB2CCR2, PWM_RES - motor_speed); break;
   }
 }

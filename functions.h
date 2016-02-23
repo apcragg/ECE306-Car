@@ -1,7 +1,6 @@
 // Function prototypes main
 void main(void);
 void Init_Conditions(void);
-void Switches_Process(void);
 void Init_Timers(void);
 void Init_LEDs(void);
 void Display_Process(void);
@@ -56,4 +55,3 @@ void enable_switch_SW1(void);
 void enable_switch_SW2(void);
 void disable_switch_SW1(void);
 void disable_switch_SW2(void);
-void Switches_Process(void);

@@ -16,12 +16,9 @@
 #include  "motor.h"
 #include  "switch.h"
 
-void setup_pwm();
-
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
 volatile unsigned int Time_Sequence;
-char led_smclk;
 volatile char one_time;
 volatile unsigned int five_msec_count;
 extern char display_line_1[11];
@@ -36,8 +33,8 @@ char posL1;
 char posL2;
 char posL3;
 char posL4;
-char size_count;
-char big;
+
+void setup_pwm(void);
 
 void main(void){
 //------------------------------------------------------------------------------
@@ -72,7 +69,6 @@ void main(void){
   posL3 = DISPLAY_LINE_2;
   display_4 = "Andrew C";
   posL4 = DISPLAY_LINE_1;
-  big = 0;
   Display_Process();
 
   
@@ -102,22 +98,11 @@ while(ALWAYS) {                            // Can the Operating system run
       if(one_time){
         one_time = FALSE;
       }
-      size_count++;
-      if(size_count > SIZE_CHANGE_TIME){
-        size_count = FALSE;
-        if(big){
-          //lcd_BIG_mid();
-          big = FALSE;
-        }else{
-          lcd_4line();
-          big = TRUE;
-        }
-      }
-        Display_Process();
-      break;                                // 
+      Display_Process();
+      break;                                
     default: break; 
   }
-  Switches_Process();                       // Check for switch state change 
+  Switches_Process(FALSE);                       // Check for switch state change 
   if(Time_Sequence > SECOND_AND_A_QUARTER){
     Time_Sequence = START_VAL;
   }

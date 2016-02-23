@@ -24,54 +24,44 @@
 // Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void Switches_Process(void){
+void Switches_Process(u_int8 is_interrupt){
 //------------------------------------------------------------------------------
   u_int8 temp_down = sw_down_mask;
   u_int8 temp_pressed = sw_pressed_mask;
   
   // Sets the display to the pressed count value
-  if((temp_pressed & SW_2) && (display_1 == "Current")) 
+  if((temp_pressed & SW_2)) 
     pressed_count = (pressed_count + INCREMENT) % NUM_SHAPES;
   
   buff[0] = DIG_TO_CH(pressed_count);
   buff[1] = NULL_TERM;
    
   if ((temp_down & SW1)){
-    display_1 = "NCSU";
+    display_1 = "Running";
     posL1 = DISPLAY_LINE_3;
-    display_2 = "WOLFPACK";
+    display_2 = "Program";
     posL2 = DISPLAY_LINE_1;
-    display_3 = "ECE306";
+    display_3 = "...";
     posL3 = DISPLAY_LINE_2;
-    display_4 = "Andrew C";
+    display_4 = " ";
     posL4 = DISPLAY_LINE_1;
   }
   if ((temp_down & SW2)) {
     display_1 = "Current";
     posL1 = DISPLAY_LINE_1;
-    display_2 = "shape";
-    posL2 = DISPLAY_LINE_2;
-    display_3 = "Counter";
-    posL3 = DISPLAY_LINE_3;
+    display_2 = "Action";
+    posL2 = DISPLAY_LINE_1;
+    display_3 = " ";
+    posL3 = DISPLAY_LINE_1;
     display_4 = buff;
     posL4 = DISPLAY_LINE_1;
-  }
-  
-  if(temp_down & SW_1)
-    P3OUT |= L_REVERSE;
-  else
-    P3OUT &= ~L_REVERSE;
-  
-  if(temp_down & SW_2)
-    P3OUT |= R_REVERSE;
-  else
-    P3OUT &= ~R_REVERSE;
-  
+  } 
                                         // Pressed only lasts one cycle
                                         // Down lasts until released
  sw_pressed_mask ^= temp_pressed;
  
- if(temp_pressed & SW_1) handle_input(temp_pressed, pressed_count);
+ if((temp_pressed & SW_1) && !is_interrupt) 
+   handle_input(temp_pressed, pressed_count);
 //------------------------------------------------------------------------------
 }
 
@@ -107,9 +97,10 @@ bool software_debounce(unsigned short volatile* port, u_int8 pin_mask)
 //------------------------------------------------------------------------------
 void sw_pressed(u_int8 sw_mask)
 {
-  PJOUT ^= IOT_FACTORY;
   sw_pressed_mask |= sw_mask;
   sw_down_mask |= sw_mask;
+  
+  //Switches_Process(TRUE);
 }     
 
 //------------------------------------------------------------------------------
@@ -126,8 +117,8 @@ void sw_pressed(u_int8 sw_mask)
 //------------------------------------------------------------------------------
 void sw_released(u_int8 sw_mask)
 {
-  PJOUT ^= IOT_WAKEUP;
-  sw_down_mask &= ~sw_mask;
+  sw_down_mask &= ~sw_mask; 
+  //Switches_Process(TRUE);
 }
 
 //------------------------------------------------------------------------------

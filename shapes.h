@@ -3,6 +3,8 @@
 
 #include "macros.h"
 #include "motor.h"
+#include "globals.h"
+#include "functions.h"
 
 void five_msec_sleep(unsigned int);
 
@@ -11,12 +13,13 @@ void five_msec_sleep(unsigned int);
     void go_circle(u_int8, u_int8, float, float);
     void go_triangle(u_int8, u_int8, float, float);
     void go_figure_eight(u_int8, float, float);
+    void go_back_and_forth(void);
     void handle_input(u_int8, u_int8);
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Module Scope Globals
-    static bool is_running = TRUE;
+    static bool is_running = FALSE;
 //------------------------------------------------------------------------------
 
 #endif

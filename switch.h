@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 // Function Declarations
-    void Switches_Process(void);
+    void Switches_Process(u_int8);
     void setup_sw_debounce(void);
     bool software_debounce(unsigned short volatile*, u_int8);
     void sw_pressed(u_int8);

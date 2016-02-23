@@ -148,8 +148,8 @@ typedef unsigned char bool;
 #define SW_2                    (0x02) // Switch 2
 #define TA1_CLK_F               (10000)// Timer A0 frequency in hz
 #define ONE_MSEC                (1000) // Number of msec in a second
-#define PRESSED_DEBOUNCE        (25)   // Debounce time for switch press
-#define RELEASED_DEBOUNCE       (300)  // Debounce time for switch press
+#define PRESSED_DEBOUNCE        (35)   // Debounce time for switch press
+#define RELEASED_DEBOUNCE       (175)  // Debounce time for switch press
 
 //Timer things
 #define TA_CTL_BASE             (TA0CTL)
