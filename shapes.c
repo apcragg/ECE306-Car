@@ -103,7 +103,7 @@ void go_circle(u_int8 num_circles, u_int8 direction,
   turn_on_motor(L_FORWARD);
 
   unsigned int delay = (unsigned int)(((float) QUARTER_SECOND * 5.07f * (float) num_circles) * length_adj);
-  five_msec_sleep(delay);
+  five_msec_delay(delay);
 
   turn_off_motor(R_FORWARD);
   turn_off_motor(L_FORWARD);
@@ -179,7 +179,7 @@ void go_triangle(u_int8 num_triangles, u_int8 direction,
     turn_on_motor(R_FORWARD);
     turn_on_motor(L_FORWARD);
 
-    five_msec_sleep((unsigned int) (length_adj * (QUARTER_SECOND) * 1.15f));
+    five_msec_delay((unsigned int) (length_adj * (QUARTER_SECOND) * 1.15f));
 
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
@@ -190,7 +190,7 @@ void go_triangle(u_int8 num_triangles, u_int8 direction,
     turn_on_motor(R_FORWARD);
     turn_on_motor(L_FORWARD);
 
-    five_msec_sleep((QUARTER_SECOND * 2) / 2);
+    five_msec_delay((QUARTER_SECOND * 2) / 2);
 
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
@@ -213,7 +213,7 @@ void go_triangle(u_int8 num_triangles, u_int8 direction,
 //------------------------------------------------------------------------------
 void go_back_and_forth(void)
 {
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
   
     set_motor_speed(R_FORWARD, MAX_SPEED);
     set_motor_speed(L_FORWARD, MAX_SPEED);
@@ -227,12 +227,12 @@ void go_back_and_forth(void)
     turn_on_motor(R_FORWARD);
     turn_on_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     // Reverse 2 sec
     display_3 = "Reverse";
@@ -241,12 +241,12 @@ void go_back_and_forth(void)
     turn_on_motor(R_REVERSE);
     turn_on_motor(L_REVERSE);
     
-    five_msec_sleep(130);
+    five_msec_delay(SECOND * 2u);
     
     turn_off_motor(R_REVERSE);
     turn_off_motor(L_REVERSE);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     // Forward 1 sec
     display_3 = "Forward";
@@ -255,12 +255,12 @@ void go_back_and_forth(void)
     turn_on_motor(R_FORWARD);
     turn_on_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     // Clockwise 1 sec
     display_3 = "Clockwise";
@@ -269,12 +269,12 @@ void go_back_and_forth(void)
     turn_on_motor(R_REVERSE);
     turn_on_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     turn_off_motor(R_REVERSE);
     turn_off_motor(L_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     // Counterclockwise 1 sec
     display_3 = "Counterclk";
@@ -283,12 +283,12 @@ void go_back_and_forth(void)
     turn_on_motor(L_REVERSE);
     turn_on_motor(R_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
     
     turn_off_motor(L_REVERSE);
     turn_off_motor(R_FORWARD);
     
-    five_msec_sleep(65);
+    five_msec_delay(SECOND);
 }
 
 

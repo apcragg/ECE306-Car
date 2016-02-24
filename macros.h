@@ -48,11 +48,11 @@ typedef unsigned char bool;
 #define SIZE_CHANGE_TIME        (5)
 #define TIMER_COUNT             (1000)
 #define OFF_BY_ONE_OFFSET       (1)
-#define QUARTER_SECOND          (50)
-#define HALF_SECOND             (100)
-#define THREE_QUARTER_SECOND    (150)
-#define SECOND                  (200)
-#define SECOND_AND_A_QUARTER    (250)
+#define QUARTER_SECOND          (50u)
+#define HALF_SECOND             (100u)
+#define THREE_QUARTER_SECOND    (150u)
+#define SECOND                  (200u)
+#define SECOND_AND_A_QUARTER    (250u)
 
 //Display Values
 #define DISPLAY_LENGTH          (11)
@@ -168,5 +168,8 @@ typedef unsigned char bool;
 #define TIMER_DIVIDE            (0x00C0) // Timer division
 #define TAxCTL_IFG              (0x0001) // Timer CTL interupt flag
 #define Px_IFG                  (0x0001) // Port interrupt flag
+
+// Timer CCRx Values
+#define TA0_FREQ                (40000) // Value for the CCR0 register for 200hz          
 
 #endif

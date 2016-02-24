@@ -8,23 +8,9 @@
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //============================================================================//
 
-
-#include "macros.h"
-#include "globals.h"
-#include "msp430.h"
-
+#include "ports.h"
 
 //------------------------------------------------------------------------------
-// Function Declarations
-    void Init_Ports(void);
-    void init_port_1(void); 
-    void init_port_2(void); 
-    void init_port_3(void); 
-    void init_port_4(void); 
-    void init_port_J(void); 
-//------------------------------------------------------------------------------
-
- //------------------------------------------------------------------------------
 // Function Name : Init_Ports
 //
 // Description: This function calls the initialization functions for each
@@ -36,7 +22,7 @@
 // Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void Init_Ports(void)
+void init_ports(void)
 {
     init_port_1(); 
     init_port_2(); 

@@ -147,33 +147,3 @@ void setup_sw_debounce(void)
   
   TA1CCTL1 &= CLEAR_REGISTER;
 }
-
-#pragma vector = PORT4_VECTOR
-__interrupt void SW_PRESSED_ISR(void)
-{
-  u_int8 current_ifg = P4IV >> 1;       // Shifts port interrupt label to
-                                        // format used by SW_1 / SW_2
-  
-  P4IE &= ~(current_ifg);               // Port interrupts turned off
-  
-  if((P4IES & current_ifg)) 
-  {
-    P4IES &= ~current_ifg;                 // Toggle rising/falling edge
-    sw_pressed(current_ifg);
-  }
-  else
-  {
-    P4IES |= current_ifg;                // Toggle rising/falling edge
-    sw_released(current_ifg);
-  }
-
-  unsigned int temp_edge = P4IES;
-  TA1CCR1 = (TA1R + ((TA1_CLK_F / ONE_MSEC) *
-            (temp_edge & current_ifg ? PRESSED_DEBOUNCE : RELEASED_DEBOUNCE))) 
-            % UINT_16_MAX;
-  
-  TA1CCTL1 &= ~CCIFG;
-  TA1CCTL1 |= CCIE;
-
-  P4IFG &= ~current_ifg;                
-}

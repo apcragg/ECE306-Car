@@ -1,89 +1,108 @@
 //============================================================================//
 // File Name : timers.c
 //
-// Description: This file contains the timer information and control functions
+// Description: This file contains the timer intialization and delay code.
 //
-// Author: Jim Carlson
-// Date: Jan 2016
+// Author: Andrew Cragg
+// Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //============================================================================//
 
-
-#include "macros.h"
-#include "globals.h"
-#include "functions.h"
+#include "timers.h"
 
 //------------------------------------------------------------------------------
-// Function Declarations
-    void Init_Timers(void);
-    void five_msec_sleep(unsigned int);
-    void Timer_code(void);
-//------------------------------------------------------------------------------
-
-    
-//------------------------------------------------------------------------------
-// Function Name : Init_Timers
+// Function Name : five_msec_delay
 //
-// Description: This function initializes the timers on the MSP430
-// Arguements: void
+// Description: This function calls a delay for a 5ms multiple of the passed
+//              delay arguement.
+// Arguements: unsigned int     delay
 // Returns:    void
 //
-// Author: Jim Carlson
-// Date: Jan 2016
+// Author: Andrew Cragg
+// Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void Init_Timers(void){
-//------------------------------------------------------------------------------
-// Timer Configurations
-//------------------------------------------------------------------------------
-  Init_Timer_A0(); //
-//  Init_Timer_A1(); // 
-//  Init_Timer_B0(); // 
-//  Init_Timer_B1(); //  
-//  Init_Timer_B2();   //  Required for provided compiled code to work
-//------------------------------------------------------------------------------
+void five_msec_delay(unsigned int delay)
+{
+  unsigned int end_count = timer_count + delay;
+  
+  while(timer_count < end_count);
 }
 
 //------------------------------------------------------------------------------
-// Function Name : five_msec_sleep
+// Function Name : init_timers
 //
-// Description: This function sleeps for (5 milliseconds * fivemsec)
-//              using the timer and a counter
-// Arguements: unsigned int fivemsec
-// Returns:    void
-//
-// Author: Jim Carlson
-// Date: Jan 2016
-// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
-//------------------------------------------------------------------------------
-void five_msec_sleep(unsigned int fivemsec){
-//------------------------------------------------------------------------------
-//Each count passed is at least x times 5 milliseconds
-  five_msec_count = START_VAL;
-  while(fivemsec > (five_msec_count + OFF_BY_ONE_OFFSET));
-//------------------------------------------------------------------------------
-}
-
-//------------------------------------------------------------------------------
-// Function Name : Timer_code
-//
-// Description: This function increments the Time_Sequence variable and the
-//              five_msec_count variable every 5 milliseconds
+// Description: This function calls the individual timer intialization 
+//              functions.
 // Arguements: void
 // Returns:    void
 //
-// Author: Jim Carlson
-// Date: Jan 2016
+// Author: Andrew Cragg
+// Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void Timer_code(void){
+void init_timers()
+{
+  init_timer_A0();
+}
+
+ //------------------------------------------------------------------------------
+// Function Name : init_timer_A0
+//
+// Description: This function initializes the timer A0. This sets up the global
+//              timer used in the program's functions. It is set up as an 8Mhz 
+//              clock with a CCR1 register calling an ISR to increment a time
+//              value every 5ms.
+// Arguements: void
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: Feb 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-// Timer A0 interrupt code
+void init_timer_A0()
+{
+  TA0CTL = CLEAR_REGISTER;
+  
+  TA0CTL |= TASSEL__SMCLK;
+  TA0CTL |= MC__UP;
+  
+  TA0CCTL0 = CLEAR_REGISTER;
+  
+  TA0CCTL0 |= CCIE;
+  
+  TA0CCR0 = TA0_FREQ;
+}
+
 //------------------------------------------------------------------------------
-  Time_Sequence++;
-  one_time = TRUE;
-  if (five_msec_count < TIMER_COUNT){
-    five_msec_count++;
-  }
+// Function Name : get_timer_count
+//
+// Description: This function returns the timer_count varriable 
+//              functions.
+// Arguements: void
+// Returns:    timer_count
+//
+// Author: Andrew Cragg
+// Date: Feb 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
+unsigned int get_timer_count()
+{
+  return timer_count;
+}
+
+//------------------------------------------------------------------------------
+// Function Name : increment_timer_count
+//
+// Description: This function increments the timer_count varriable.
+// Arguements: void
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: Feb 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+void increment_timer_count()
+{
+  timer_count++;
 }

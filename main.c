@@ -15,12 +15,11 @@
 #include  "pwm.h"
 #include  "motor.h"
 #include  "switch.h"
+#include  "timers.h"
+#include  "ports.h"
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
-volatile unsigned int Time_Sequence;
-volatile char one_time;
-volatile unsigned int five_msec_count;
 extern char display_line_1[11];
 extern char display_line_2[11];
 extern char display_line_3[11];
@@ -44,12 +43,11 @@ void main(void){
 // 
 //------------------------------------------------------------------------------
   
-  Init_Ports();                            
+  init_ports();                            
   Init_Clocks();                            
-  Init_Conditions();
-  Time_Sequence = START_VAL;                        
-  Init_Timers();                            
-  five_msec_sleep(QUARTER_SECOND);                      
+  Init_Conditions();                     
+  init_timers();                            
+  five_msec_delay(QUARTER_SECOND);                      
   Init_LCD();  
   setup_sw_debounce();
   
@@ -71,17 +69,21 @@ void main(void){
   posL4 = DISPLAY_LINE_1;
   Display_Process();
 
+  char one_time;                                // Timer boolean
+  unsigned int      time_sequence  = START_VAL; // counter for switch loop
+  unsigned int previous_count = START_VAL;      // automatic variable for
+                                                // comparing timer_count
   
 //------------------------------------------------------------------------------
 // Begining of the "While" Operating System
 //------------------------------------------------------------------------------
 while(ALWAYS) {                            // Can the Operating system run
-  switch(Time_Sequence){
+  switch(time_sequence){
     case SECOND_AND_A_QUARTER:              // 1250 msec  
       if(one_time){
         one_time = FALSE;
       }
-      Time_Sequence = FALSE;                    
+      time_sequence = FALSE;                    
     case SECOND:                            // 1000 msec  
       if(one_time){
         one_time = FALSE;
@@ -102,11 +104,18 @@ while(ALWAYS) {                            // Can the Operating system run
       break;                                
     default: break; 
   }
-  Switches_Process(FALSE);                       // Check for switch state change 
-  if(Time_Sequence > SECOND_AND_A_QUARTER){
-    Time_Sequence = START_VAL;
-  }
-
+  Switches_Process(FALSE);                 // Check for switch state change 
+  
+  if(time_sequence > SECOND_AND_A_QUARTER)
+    time_sequence = START_VAL;
+  
+  unsigned int current_timer_count = get_timer_count();
+  
+  if(current_timer_count > previous_count)
+  {
+    previous_count = current_timer_count;
+    time_sequence++;
+  } 
  }
 //------------------------------------------------------------------------------
 }

@@ -21,6 +21,3 @@ extern char posL2;
 extern char posL3;
 extern char posL4;
 extern volatile unsigned char control_state[CNTL_STATE_INDEX];
-extern volatile unsigned int Time_Sequence;
-extern volatile char one_time;
-extern volatile unsigned int five_msec_count;
