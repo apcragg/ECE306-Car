@@ -13,6 +13,14 @@ settings/
 .ewp
 .eww
 
+
+*.dep
+*.ewd
+*.ewt
+*.txt
+*.ewp
+*.eww
+
 # Folder config file
 Desktop.ini
 
