@@ -6,6 +6,12 @@ ehthumbs.db
 Debug/
 Release/
 settings/
+.dep
+.ewd
+.ewt
+.txt
+.ewp
+.eww
 
 # Folder config file
 Desktop.ini
