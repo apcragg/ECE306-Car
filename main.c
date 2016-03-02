@@ -58,7 +58,6 @@ void main(void){
   set_motor_speed(R_FORWARD, PWM_RES);
   set_motor_speed(L_FORWARD, PWM_RES);
   
-//             1234567890
   display_1 = "NCSU";
   posL1 = DISPLAY_LINE_3;
   display_2 = "WOLFPACK";
