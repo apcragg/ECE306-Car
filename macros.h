@@ -28,10 +28,13 @@ typedef unsigned char bool;
 #define true                    (1)
 #define UINT_16_MAX             (0xFFFF)
 #define PI                      (3.1415) // PI
+#define INVALID                 (-1)
+#define NIBBLE                  (0xF)
 
 
 // Helper macros
 #define DIG_TO_CH(D)            ((D)+0x30) // Converts a digit to an ASCII char
+#define HEX_TO_CH(H)            ((H) > 9 ? ((H) % 10) + 'A' : (H) + '0')
 
 // LCD
 #define LCD_HOME_L1	        (0x80)
@@ -56,6 +59,7 @@ typedef unsigned char bool;
 
 //Display Values
 #define DISPLAY_LENGTH          (11)
+#define DISPLAY_LINE_0          (0)
 #define DISPLAY_LINE_1          (1)
 #define DISPLAY_LINE_2          (2)
 #define DISPLAY_LINE_3          (3)
@@ -133,8 +137,14 @@ typedef unsigned char bool;
 #define MAX_SPEED               (PWM_RES)
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 
+// ADC things
+#define ADC0                    (0)    // ADC0 Pin
+#define ADC1                    (1)    // ADC1 Pin
+#define ADC2                    (2)    // ADC2 Pin
+#define ADC3                    (3)    // ADC3 Pin
+
 // Shape Constants
-#define NUM_SHAPES              (6)    // Number of possible shapes
+#define NUM_SHAPES              (7)    // Number of possible shapes
 #define INCREMENT               (1)    // Shape counter increment
 #define DIR_LEFT                (0x00) // Port side
 #define DIR_RIGHT               (0x01) // Starboard side

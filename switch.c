@@ -9,6 +9,7 @@
 //============================================================================//
 
 #include "switch.h"
+#include "adc.h"
 
 
 //------------------------------------------------------------------------------
@@ -28,6 +29,7 @@ void Switches_Process(u_int8 is_interrupt){
 //------------------------------------------------------------------------------
   u_int8 temp_down = sw_down_mask;
   u_int8 temp_pressed = sw_pressed_mask;
+  int adc_val;
   
   // Sets the display to the pressed count value
   if((temp_pressed & SW_2)) 
@@ -35,6 +37,15 @@ void Switches_Process(u_int8 is_interrupt){
   
   buff[0] = DIG_TO_CH(pressed_count);
   buff[1] = NULL_TERM;
+  
+  adc_val = analog_read(pressed_count > 3 ? ADC3 : ADC0);
+  
+  adc_val_buff[0] = '0';
+  adc_val_buff[1] = 'x';
+  adc_val_buff[2] = HEX_TO_CH((adc_val >> 8) & NIBBLE);
+  adc_val_buff[3] = HEX_TO_CH((adc_val >> 4) & NIBBLE);
+  adc_val_buff[4] = HEX_TO_CH((adc_val >> 0) & NIBBLE);
+  adc_val_buff[5] = NULL_TERM;
    
   if ((temp_down & SW1)){
     display_1 = "Running";
@@ -51,7 +62,7 @@ void Switches_Process(u_int8 is_interrupt){
     posL1 = DISPLAY_LINE_1;
     display_2 = "Action";
     posL2 = DISPLAY_LINE_1;
-    display_3 = " ";
+    display_3 = adc_val_buff;
     posL3 = DISPLAY_LINE_1;
     display_4 = buff;
     posL4 = DISPLAY_LINE_1;

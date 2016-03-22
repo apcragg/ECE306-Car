@@ -20,4 +20,5 @@
     
     static volatile u_int8 pressed_count = 0;
     static char buff[2];
+    static char adc_val_buff[6];
 //------------------------------------------------------------------------------

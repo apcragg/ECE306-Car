@@ -17,6 +17,7 @@
 #include  "switch.h"
 #include  "timers.h"
 #include  "ports.h"
+#include  "adc.h"
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
@@ -50,6 +51,7 @@ void main(void){
   five_msec_delay(QUARTER_SECOND);                      
   Init_LCD();  
   setup_sw_debounce();
+  init_adc();
   
   WDTCTL = WDTPW + WDTHOLD;
   
@@ -58,14 +60,14 @@ void main(void){
   set_motor_speed(R_FORWARD, PWM_RES);
   set_motor_speed(L_FORWARD, PWM_RES);
   
-  display_1 = "NCSU";
-  posL1 = DISPLAY_LINE_3;
-  display_2 = "WOLFPACK";
-  posL2 = DISPLAY_LINE_1;
-  display_3 = "ECE306";
-  posL3 = DISPLAY_LINE_2;
-  display_4 = "Andrew C";
-  posL4 = DISPLAY_LINE_1;
+  display_1 = "Andrew C";
+  posL1 = DISPLAY_LINE_0;
+  display_2 = "ECE306";
+  posL2 = DISPLAY_LINE_0;
+  display_3 = "";
+  posL3 = DISPLAY_LINE_0;
+  display_4 = "";
+  posL4 = DISPLAY_LINE_0;
   Display_Process();
 
   char one_time;                                // Timer boolean
@@ -79,24 +81,29 @@ void main(void){
 while(ALWAYS) {                            // Can the Operating system run
   switch(time_sequence){
     case SECOND_AND_A_QUARTER:              // 1250 msec  
-      if(one_time){
+      if(one_time)
+      {
         one_time = FALSE;
       }
       time_sequence = FALSE;                    
     case SECOND:                            // 1000 msec  
-      if(one_time){
+      if(one_time)
+      {
         one_time = FALSE;
       }
     case THREE_QUARTER_SECOND:              // 750 msec  
-      if(one_time){
+      if(one_time)
+      {
         one_time = FALSE;
       }
     case HALF_SECOND:                       // 500 msec  
-      if(one_time){
+      if(one_time)
+      {
         one_time = FALSE;
       }
     case  QUARTER_SECOND:                   // 250 msec  
-      if(one_time){
+      if(one_time)
+      {
         one_time = FALSE;
       }
       Display_Process();
