@@ -30,6 +30,7 @@ typedef unsigned char bool;
 #define PI                      (3.1415) // PI
 #define INVALID                 (-1)
 #define NIBBLE                  (0xF)
+#define INCREMENT               (1)
 
 
 // Helper macros
@@ -138,10 +139,22 @@ typedef unsigned char bool;
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 
 // ADC things
-#define ADC0                    (0)    // ADC0 Pin
-#define ADC1                    (1)    // ADC1 Pin
-#define ADC2                    (2)    // ADC2 Pin
-#define ADC3                    (3)    // ADC3 Pin
+#define ADC0                    (0)      // ADC0 Pin
+#define ADC1                    (1)      // ADC1 Pin
+#define ADC2                    (2)      // ADC2 Pin
+#define ADC3                    (3)      // ADC3 Pin
+#define MAX_ADC10               (0x03FF) // Max ADC 10 bit value
+#define MIN_ADC10               (0x0000) // Min ADC 10 bit value
+
+// Menu things
+#define MENU_MAIN               (0)
+#define MENU_SHAPES             (1)
+#define MENU_LINE               (2)
+#define NUM_MAIN_OPTIONS        (3)
+
+#define BACK_OPTION             (0)
+#define CAL_OPTION              (1)
+#define RUN_BASIC_OPTION        (2)
 
 // Shape Constants
 #define NUM_SHAPES              (7)    // Number of possible shapes
@@ -158,8 +171,8 @@ typedef unsigned char bool;
 #define SW_2                    (0x02) // Switch 2
 #define TA1_CLK_F               (10000)// Timer A0 frequency in hz
 #define ONE_MSEC                (1000) // Number of msec in a second
-#define PRESSED_DEBOUNCE        (35)   // Debounce time for switch press
-#define RELEASED_DEBOUNCE       (175)  // Debounce time for switch press
+#define PRESSED_DEBOUNCE        (200)   // Debounce time for switch press
+#define RELEASED_DEBOUNCE       (200)  // Debounce time for switch press
 
 //Timer things
 #define TA_CTL_BASE             (TA0CTL)

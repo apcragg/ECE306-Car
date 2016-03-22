@@ -56,6 +56,7 @@ void handle_input(u_int8 sw_pressed_mask, u_int8 sw_pressed_count)
         go_triangle(2, DIR_LEFT, 1.0f, 1.0f);
         break;
       case 6:
+        
         break;
       default: break;
     }

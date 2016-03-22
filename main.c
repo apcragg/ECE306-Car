@@ -18,6 +18,7 @@
 #include  "timers.h"
 #include  "ports.h"
 #include  "adc.h"
+#include  "menu.h"
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
@@ -110,7 +111,9 @@ while(ALWAYS) {                            // Can the Operating system run
       break;                                
     default: break; 
   }
-  Switches_Process(FALSE);                 // Check for switch state change 
+  
+  update_switches();                 // Check for switch state change
+  update_menu();
   
   if(time_sequence > SECOND_AND_A_QUARTER)
     time_sequence = START_VAL;

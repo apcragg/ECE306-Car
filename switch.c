@@ -11,6 +11,17 @@
 #include "switch.h"
 #include "adc.h"
 
+    
+//------------------------------------------------------------------------------
+// Module Scope Globals
+    static volatile u_int8 sw_pressed_mask = FALSE;
+    static volatile u_int8 sw_down_mask = FALSE;
+    
+    static volatile u_int8 pressed_count = 0;
+    static char buff[2];
+    static char adc_val_buff[6];
+//------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------
 // Function Name : Switches_Process
@@ -25,8 +36,8 @@
 // Date: Feb 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void Switches_Process(u_int8 is_interrupt){
-//------------------------------------------------------------------------------
+void update_switches()
+{
   u_int8 temp_down = sw_down_mask;
   u_int8 temp_pressed = sw_pressed_mask;
   int adc_val;
@@ -47,33 +58,29 @@ void Switches_Process(u_int8 is_interrupt){
   adc_val_buff[4] = HEX_TO_CH((adc_val >> 0) & NIBBLE);
   adc_val_buff[5] = NULL_TERM;
    
-  if ((temp_down & SW1)){
-    display_1 = "Running";
-    posL1 = DISPLAY_LINE_3;
-    display_2 = "Program";
-    posL2 = DISPLAY_LINE_1;
-    display_3 = "...";
-    posL3 = DISPLAY_LINE_2;
-    display_4 = " ";
-    posL4 = DISPLAY_LINE_1;
+  if ((temp_down & SW1))
+  {
+ 
   }
-  if ((temp_down & SW2)) {
-    display_1 = "Current";
+  if ((temp_down & SW2) && FALSE) {
+    display_1 = "Debug";
     posL1 = DISPLAY_LINE_1;
-    display_2 = "Action";
+    display_2 = "Values";
     posL2 = DISPLAY_LINE_1;
     display_3 = adc_val_buff;
     posL3 = DISPLAY_LINE_1;
     display_4 = buff;
     posL4 = DISPLAY_LINE_1;
   } 
+  
+  menu_handle_input(temp_pressed);
+  
                                         // Pressed only lasts one cycle
                                         // Down lasts until released
- sw_pressed_mask ^= temp_pressed;
+  sw_pressed_mask ^= temp_pressed;
  
- if((temp_pressed & SW_1) && !is_interrupt) 
-   handle_input(temp_pressed, pressed_count);
-//------------------------------------------------------------------------------
+  //if(temp_pressed & SW_1)
+  //  handle_input(temp_pressed, pressed_count);
 }
 
 //------------------------------------------------------------------------------
@@ -110,8 +117,6 @@ void sw_pressed(u_int8 sw_mask)
 {
   sw_pressed_mask |= sw_mask;
   sw_down_mask |= sw_mask;
-  
-  //Switches_Process(TRUE);
 }     
 
 //------------------------------------------------------------------------------
@@ -129,7 +134,6 @@ void sw_pressed(u_int8 sw_mask)
 void sw_released(u_int8 sw_mask)
 {
   sw_down_mask &= ~sw_mask; 
-  //Switches_Process(TRUE);
 }
 
 //------------------------------------------------------------------------------
@@ -157,4 +161,20 @@ void setup_sw_debounce(void)
   TA1CTL |= TIMER_CONTINUOUS;
   
   TA1CCTL1 &= CLEAR_REGISTER;
+}
+
+//------------------------------------------------------------------------------
+// Function Name : get_sw_pressed
+//
+// Description: This is a basic getter for the local sw_pressed field 
+// Arguements: void
+// Returns:    void                  
+//
+// Author: Andrew Cragg
+// Date: March 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+u_int8 get_sw_pressed()
+{
+  return sw_pressed_mask;
 }
