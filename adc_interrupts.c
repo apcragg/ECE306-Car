@@ -18,5 +18,9 @@ __interrupt void ADC10_ISR(void)
   if(ADC10IV | ADC10IV_ADC10IFG)
     set_conversion_flag(TRUE);
   
+  int channel = ADC10MCTL0 & NIBBLE;
+  
+  set_adc_val(channel, ADC10MEM0);
+  
   ADC10IV = CLEAR_REGISTER;
 }

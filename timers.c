@@ -11,6 +11,12 @@
 #include "timers.h"
 
 //------------------------------------------------------------------------------
+// Globals
+    long volatile int system_time = START_VAL; // Not going to overflow as long 
+                                               // as run time less than 240 days
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Function Name : five_msec_delay
 //
 // Description: This function calls a delay for a 5ms multiple of the passed
@@ -94,7 +100,7 @@ unsigned int get_timer_count()
 //------------------------------------------------------------------------------
 // Function Name : increment_timer_count
 //
-// Description: This function increments the timer_count varriable.
+// Description: This function increments the timer_count varriable every 5 msec
 // Arguements: void
 // Returns:    void
 //
@@ -105,4 +111,5 @@ unsigned int get_timer_count()
 void increment_timer_count()
 {
   timer_count++;
+  system_time++;
 }

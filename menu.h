@@ -6,6 +6,7 @@
 #include "msp430.h"
 #include "switch.h"
 #include "line.h"
+#include "adc.h"
 
 //------------------------------------------------------------------------------
 // Function Declarations

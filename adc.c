@@ -11,6 +11,11 @@
 #include "adc.h"
 
 //------------------------------------------------------------------------------
+// Local Varriables
+    static int adc_val[4];
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Function Name : init_adc
 //
 // Description: This function initializes the ADC10 module for later use
@@ -74,8 +79,19 @@ int analog_read(int channel)
   ADC10MCTL0 &= ~NIBBLE; // Clears Channel
   ADC10MCTL0 |= channel; // Sets Channel
   
+  // Force completes a conversion and returns the value
   if(!(ADC10CTL1 & ADC10BUSY))
   {
+    ADC10CTL0 |= ADC10ENC + ADC10SC;
+    
+    while(!conversion_flag); // Kill time until conversion complete
+    
+    read_value = ADC10MEM0;
+  }
+  else                                  
+  {
+    while(ADC10CTL1 & ADC10BUSY); // Kill time until ADC ready
+    
     ADC10CTL0 |= ADC10ENC + ADC10SC;
     
     while(!conversion_flag); // Kill time until conversion complete
@@ -89,10 +105,43 @@ int analog_read(int channel)
 }
 
 //------------------------------------------------------------------------------
+// Function Name : set_adc_val
+//
+// Description: Retrieves the internal ADC value of the requested channel
+// Arguements: channel          ADC channel the value is to come from
+// Returns:                     The requested ADC value
+//
+// Author: Andrew Cragg
+// Date: March 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+int get_adc_val(u_int8 channel)
+{
+  return adc_val[channel];
+}
+
+//------------------------------------------------------------------------------
+// Function Name : set_adc_val
+//
+// Description: Sets the internal ADC data to the value read from the ADC
+// Arguements: channel          ADC channel the value came from
+//             value            ADC value to store
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: March 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+void set_adc_val(u_int8 channel, int value)
+{
+  adc_val[channel] = value;
+}
+
+//------------------------------------------------------------------------------
 // Function Name : set_conversion_flag
 //
 // Description: Allows external interrupt to set the internal conversion flag
-// Arguements: void
+// Arguements: set_flag         boolean value for flag to be set to
 // Returns:    void
 //
 // Author: Andrew Cragg

@@ -71,7 +71,6 @@ void main(void){
   posL4 = DISPLAY_LINE_0;
   Display_Process();
 
-  char one_time;                                // Timer boolean
   unsigned int      time_sequence  = START_VAL; // counter for switch loop
   unsigned int previous_count = START_VAL;      // automatic variable for
                                                 // comparing timer_count
@@ -80,37 +79,9 @@ void main(void){
 // Begining of the "While" Operating System
 //------------------------------------------------------------------------------
 while(ALWAYS) {                            // Can the Operating system run
-  switch(time_sequence){
-    case SECOND_AND_A_QUARTER:              // 1250 msec  
-      if(one_time)
-      {
-        one_time = FALSE;
-      }
-      time_sequence = FALSE;                    
-    case SECOND:                            // 1000 msec  
-      if(one_time)
-      {
-        one_time = FALSE;
-      }
-    case THREE_QUARTER_SECOND:              // 750 msec  
-      if(one_time)
-      {
-        one_time = FALSE;
-      }
-    case HALF_SECOND:                       // 500 msec  
-      if(one_time)
-      {
-        one_time = FALSE;
-      }
-    case  QUARTER_SECOND:                   // 250 msec  
-      if(one_time)
-      {
-        one_time = FALSE;
-      }
-      Display_Process();
-      break;                                
-    default: break; 
-  }
+
+  if(!(time_sequence % QUARTER_SECOND))
+    Display_Process();
   
   update_switches();                 // Check for switch state change
   update_menu();

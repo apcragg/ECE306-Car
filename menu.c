@@ -14,8 +14,8 @@
 // Local Varriables
     static u_int8 current_menu = MENU_MAIN;
     static u_int8 menu_pressed_count = 0;
-    static char buffer[2] = "0";
-    static const u_int8 num_menu_options[3] = {3, 7, 3};
+    static char buffer[11] = "0";
+    static const u_int8 num_menu_options[3] = {3, 7, 4};
 //------------------------------------------------------------------------------
     
 //------------------------------------------------------------------------------
@@ -54,6 +54,8 @@
 //------------------------------------------------------------------------------
 void update_menu()
 {
+  int adc_val;
+  
   buffer[0] = DIG_TO_CH(menu_pressed_count);
   buffer[1] = NULL_TERM;
   
@@ -82,6 +84,17 @@ void update_menu()
     display_2 = line_menu_options[1];
     display_3 = line_menu_options[2];
     display_4 = buffer;
+    
+    adc_val = (analog_read(ADC0) + analog_read(ADC1)) / 2;
+  
+    buffer[1] = ' ';
+    buffer[2] = '0';
+    buffer[3] = 'x';
+    buffer[4] = HEX_TO_CH((adc_val >> 8) & NIBBLE);
+    buffer[5] = HEX_TO_CH((adc_val >> 4) & NIBBLE);
+    buffer[6] = HEX_TO_CH((adc_val >> 0) & NIBBLE);
+    buffer[7] = NULL_TERM;
+  
     break;
     default:
       current_menu = MENU_MAIN;
@@ -125,18 +138,24 @@ void menu_handle_input(u_int8 sw_pressed)
       break;
       case MENU_SHAPES:
         {
+          set_motor_speed(L_FORWARD, (int) (MAX_SPEED));
+          set_motor_speed(R_FORWARD, (int) (MAX_SPEED));
+  
+          turn_on_motor(R_FORWARD);
+          turn_on_motor(L_FORWARD);
+          
           current_menu = MENU_MAIN;        
           menu_pressed_count = MENU_MAIN;
         }
       break;
       case MENU_LINE:
-        if(menu_pressed_count == CAL_OPTION)
+        if(menu_pressed_count == BLACK_VAL || menu_pressed_count == WHITE_VAL)
         {
-          calibrate_sensors();
+          calibrate_sensors(menu_pressed_count);
         }
         else if(menu_pressed_count == RUN_BASIC_OPTION)
         {
-          ;
+          run_basic();
         }
         else
         {

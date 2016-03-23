@@ -31,6 +31,11 @@ typedef unsigned char bool;
 #define INVALID                 (-1)
 #define NIBBLE                  (0xF)
 #define INCREMENT               (1)
+#define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
+
+#define TENS                    (10)
+#define HUNDREDS                (100)
+#define THOUSANDS               (1000)
 
 
 // Helper macros
@@ -44,6 +49,7 @@ typedef unsigned char bool;
 #define LCD_HOME_L4         	(0xE0)
 #define LCD_BASE                (0x00)
 #define NULL_TERM               (0x00)
+#define LCD_LENGTH              (11)
 
 //Timeing Values
 #define FALSE                   (0x00)
@@ -57,6 +63,8 @@ typedef unsigned char bool;
 #define THREE_QUARTER_SECOND    (150u)
 #define SECOND                  (200u)
 #define SECOND_AND_A_QUARTER    (250u)
+#define FIVE_SECONDS            (SECOND*5)
+#define BY_FIVE                 (5)
 
 //Display Values
 #define DISPLAY_LENGTH          (11)
@@ -134,9 +142,11 @@ typedef unsigned char bool;
 #define PWM_RES                 (4096) // PWM resolution
 
 // Motor constants
-#define MOTOR_ADJ_FAC           (0.955f) // Left motor compensation
+#define MOTOR_ADJ_FAC           (.955f) // Left motor compensation
 #define MAX_SPEED               (PWM_RES)
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
+#define ACTIVE_BREAK            (12)
+#define TURN_ON_COMP            (35)
 
 // ADC things
 #define ADC0                    (0)      // ADC0 Pin
@@ -153,8 +163,16 @@ typedef unsigned char bool;
 #define NUM_MAIN_OPTIONS        (3)
 
 #define BACK_OPTION             (0)
-#define CAL_OPTION              (1)
-#define RUN_BASIC_OPTION        (2)
+
+#define BLACK_VAL               (1)
+#define WHITE_VAL               (2)
+#define RUN_BASIC_OPTION        (3)
+
+// Line things
+#define RIGHT_DETECT            (0)
+#define LEFT_DETECT             (1)
+#define TRIGGER_COUNT           (3)
+#define AVG_2                   (2)
 
 // Shape Constants
 #define NUM_SHAPES              (7)    // Number of possible shapes

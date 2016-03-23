@@ -14,6 +14,7 @@
 #include "msp430.h"
 #include "macros.h"
 #include "motor.h"
+#include "timers.h"
 
 
 //------------------------------------------------------------------------------
@@ -128,4 +129,56 @@ void set_motor_speed(u_int8 motor, int motor_speed)
     case L_REVERSE: 
       set_pwm_value(&TB2CCR2, PWM_RES - motor_speed); break;
   }
+}
+
+//------------------------------------------------------------------------------
+// Function Name : active_brake
+//
+// Description: This function activly brakes the car by turn the reverse motors
+//              on hard for a breif moment.
+// Arguements: void
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: March 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+void active_brake()
+{
+  turn_off_motor(R_FORWARD);
+  turn_off_motor(L_FORWARD);
+  
+  turn_on_motor(R_REVERSE);      // Active braking
+  turn_on_motor(L_REVERSE);
+  
+  five_msec_delay(ACTIVE_BREAK); // Active braking time constant
+  
+  turn_off_motor(R_REVERSE);
+  turn_off_motor(L_REVERSE);
+}
+
+//------------------------------------------------------------------------------
+// Function Name : active_brake_reverse
+//
+// Description: This function activly brakes the car by turn the forward motors
+//              on hard for a breif moment.
+// Arguements: void
+// Returns:    void
+//
+// Author: Andrew Cragg
+// Date: March 2016
+// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
+//------------------------------------------------------------------------------
+void active_brake_reverse()
+{
+  turn_off_motor(R_REVERSE);
+  turn_off_motor(L_REVERSE);
+  
+  turn_on_motor(R_FORWARD);      // Active braking
+  turn_on_motor(L_FORWARD);
+  
+  five_msec_delay(ACTIVE_BREAK); // Active braking time constant
+  
+  turn_off_motor(R_FORWARD);
+  turn_off_motor(L_FORWARD);
 }

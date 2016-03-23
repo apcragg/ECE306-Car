@@ -10,6 +10,8 @@
     void turn_on_motor(u_int8);
     void turn_off_motor(u_int8);
     void set_motor_speed(u_int8, int);
+    void active_brake();
+    void active_brake_reverse();
 //------------------------------------------------------------------------------
 
 #endif
