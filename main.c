@@ -19,6 +19,7 @@
 #include  "ports.h"
 #include  "adc.h"
 #include  "menu.h"
+#include  "serial.h"
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
@@ -53,6 +54,7 @@ void main(void){
   Init_LCD();  
   setup_sw_debounce();
   init_adc();
+  init_serial_uart();
   
   WDTCTL = WDTPW + WDTHOLD;
   
@@ -71,32 +73,32 @@ void main(void){
   posL4 = DISPLAY_LINE_0;
   Display_Process();
 
-  unsigned int      time_sequence  = START_VAL; // counter for switch loop
+  unsigned int time_sequence  = START_VAL;      // counter for switch loop
   unsigned int previous_count = START_VAL;      // automatic variable for
                                                 // comparing timer_count
   
 //------------------------------------------------------------------------------
 // Begining of the "While" Operating System
 //------------------------------------------------------------------------------
-while(ALWAYS) {                            // Can the Operating system run
+  while(ALWAYS) {                            // Can the Operating system run
 
-  if(!(time_sequence % QUARTER_SECOND))
-    Display_Process();
-  
-  update_switches();                 // Check for switch state change
-  update_menu();
-  
-  if(time_sequence > SECOND_AND_A_QUARTER)
-    time_sequence = START_VAL;
-  
-  unsigned int current_timer_count = get_timer_count();
-  
-  if(current_timer_count > previous_count)
-  {
-    previous_count = current_timer_count;
-    time_sequence++;
-  } 
- }
+    if(!(time_sequence % QUARTER_SECOND))
+      Display_Process();
+    
+    update_switches();                 // Check for switch state change
+    update_menu();
+    
+    if(time_sequence > SECOND_AND_A_QUARTER)
+      time_sequence = START_VAL;
+    
+    unsigned int current_timer_count = get_timer_count();
+    
+    if(current_timer_count > previous_count)
+    {
+      previous_count = current_timer_count;
+      time_sequence++;
+    } 
+   }
 //------------------------------------------------------------------------------
 }
 

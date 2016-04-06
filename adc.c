@@ -73,6 +73,9 @@ void init_adc()
 //------------------------------------------------------------------------------
 int analog_read(int channel)
 {
+  // TODO: Turn on LED, no delay needed as rise time is ~900ns per the 
+  // data sheet and at 8Mhz that is < 7 1 cycle instructions
+  
   int read_value = INVALID;
   
   ADC10CTL0 &= ~ADC10ENC;

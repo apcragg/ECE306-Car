@@ -32,6 +32,7 @@ typedef unsigned char bool;
 #define NIBBLE                  (0xF)
 #define INCREMENT               (1)
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
+#define NULL                    (0)
 
 #define TENS                    (10)
 #define HUNDREDS                (100)
@@ -158,15 +159,24 @@ typedef unsigned char bool;
 
 // Menu things
 #define MENU_MAIN               (0)
-#define MENU_SHAPES             (1)
+#define MENU_SERIAL             (1)
 #define MENU_LINE               (2)
-#define NUM_MAIN_OPTIONS        (3)
+#define MENU_SHAPES             (3)
+#define NUM_MAIN_OPTIONS        (4)
 
 #define BACK_OPTION             (0)
 
 #define BLACK_VAL               (1)
 #define WHITE_VAL               (2)
 #define RUN_BASIC_OPTION        (3)
+
+// Serial things
+#define BAUD_9600               (1)
+#define BAUD_115200             (2)
+#define BAUD_9600_S             "9600 Baud"
+#define BAUD_115200_S           "115600 Baud"
+#define BAUD_9600_VAL           (9600)
+#define BAUD_115600_VAL         (115600)
 
 // Line things
 #define RIGHT_DETECT            (0)

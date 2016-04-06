@@ -146,7 +146,8 @@ void run_basic()
   active_brake_reverse();
   
   elapsed_time = system_time - start_time;
-    
+   
+  
   msec_time = elapsed_time * BY_FIVE;
   timer_buffer[0] = (((msec_time % (THOUSANDS * TENS)) -
                      (msec_time % THOUSANDS)) / THOUSANDS) + '0';
@@ -160,6 +161,8 @@ void run_basic()
   display_2 = "Idling";
   display_4 = timer_buffer;
   Display_Process();
+  
+  /*
   
   five_msec_delay(FIVE_SECONDS); // 5 sec Pause
   
@@ -194,4 +197,5 @@ void run_basic()
   five_msec_delay((FIVE_SECONDS - SECOND - QUARTER_SECOND));
   
   active_brake();
+  */
 }

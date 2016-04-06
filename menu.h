@@ -7,6 +7,7 @@
 #include "switch.h"
 #include "line.h"
 #include "adc.h"
+#include "serial.h"
 
 //------------------------------------------------------------------------------
 // Function Declarations
