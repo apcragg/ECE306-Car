@@ -33,6 +33,7 @@ typedef unsigned char bool;
 #define INCREMENT               (1)
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
 #define NULL                    (0)
+#define OFF_BY_ONE              (1)
 
 #define TENS                    (10)
 #define HUNDREDS                (100)
@@ -194,13 +195,19 @@ typedef unsigned char bool;
 #define BATT_COMP               (4.99f / 4.88f) // current battery level
 #define UN_COMP                 (1.0f) // No adjustment compensation factor
 
-//Switch things
+// Switch things
 #define SW_1                    (0x01) // Switch 1
 #define SW_2                    (0x02) // Switch 2
 #define TA1_CLK_F               (10000)// Timer A0 frequency in hz
 #define ONE_MSEC                (1000) // Number of msec in a second
 #define PRESSED_DEBOUNCE        (200)   // Debounce time for switch press
 #define RELEASED_DEBOUNCE       (200)  // Debounce time for switch press
+
+// Serial things
+#define BUF_SIZE                (64)
+#define NUM_BUF_SIZE            (6)
+#define DEMO_COUNT              (100)
+#define RESET_COUNT             (64535)
 
 //Timer things
 #define TA_CTL_BASE             (TA0CTL)

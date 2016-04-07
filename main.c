@@ -85,8 +85,12 @@ void main(void){
     if(!(time_sequence % QUARTER_SECOND))
       Display_Process();
     
+    if(!(time_sequence % SECOND));
+       start_transmit_from_buffer();
+    
     update_switches();                 // Check for switch state change
     update_menu();
+    //transmit_loop();
     
     if(time_sequence > SECOND_AND_A_QUARTER)
       time_sequence = START_VAL;

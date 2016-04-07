@@ -29,9 +29,9 @@
     };
     static char* const serial_menu_options[3] = 
     {
-      "1 9600 B",
-      "2 115600 B",
-      "Meesage:",
+      "Set 9600 B",
+      "Start Loop",
+      "Loop Count:",
     };
     static char* const line_menu_options[3] = 
     {
@@ -82,7 +82,7 @@ void update_menu()
     display_1 = serial_menu_options[0];
     display_2 = serial_menu_options[1];
     display_3 = serial_menu_options[2];
-    display_4 = is_message_received() ? read_buffer() : display_4;
+    //display_4 = is_message_received() ? read_buffer(FALSE) : display_4;
     //get_current_baud() == BAUD_9600 ? BAUD_9600_S : BAUD_115200_S;
     break;
     case MENU_LINE:
@@ -162,12 +162,12 @@ void menu_handle_input(u_int8 sw_pressed)
         if(menu_pressed_count == BAUD_9600)
         {
           set_current_baud(BAUD_9600);
-          transmit_message("Bye World");
+          transmit_message("Hello World");
         }
         else if(menu_pressed_count == BAUD_115200)
         {
-          set_current_baud(BAUD_115200);
-          transmit_message("HelloWorld");
+          //set_current_baud(BAUD_115200);
+          transmit_message("00001");
         }
         else
         {
