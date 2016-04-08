@@ -34,6 +34,7 @@ typedef unsigned char bool;
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
 #define NULL                    (0)
 #define OFF_BY_ONE              (1)
+#define START_ZERO              (0)
 
 #define TENS                    (10)
 #define HUNDREDS                (100)
@@ -160,10 +161,16 @@ typedef unsigned char bool;
 
 // Menu things
 #define MENU_MAIN               (0)
-#define MENU_SERIAL             (1)
-#define MENU_LINE               (2)
-#define MENU_SHAPES             (3)
+#define MENU_RESISTORS          (1)
+#define MENU_SHAPES             (2)
+#define MENU_SONG               (3)
 #define NUM_MAIN_OPTIONS        (4)
+#define NUM_RESISTORS           (10)
+#define NUM_SHAPE_OPTIONS       (10)
+#define FIGHT_SONG_LENGTH       (223)
+#define RED_WHITE_LENGTH        (32)
+#define SCROLL_FORWARD          (35)
+#define SCROLL_BACK             (10)
 
 #define BACK_OPTION             (0)
 

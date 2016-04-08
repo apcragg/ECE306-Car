@@ -13,6 +13,11 @@
 // Function Declarations
     void update_menu(void);
     void menu_handle_input(u_int8);
+    void update_main_menu();
+    void update_resistor_menu();
+    void update_shape_menu();
+    void update_song_menu();
+    void blink_menu_selection(int);
 //------------------------------------------------------------------------------
 
 #endif
