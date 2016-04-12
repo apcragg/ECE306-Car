@@ -15,7 +15,7 @@
     static u_int8 current_menu = MENU_SERIAL;
     static u_int8 menu_pressed_count = 0;
     static char buffer[11] = "0";
-    static const u_int8 num_menu_options[4] = {4, 3, 4, 5};
+    static const u_int8 num_menu_options[4] = {4, 4, 4, 5};
 //------------------------------------------------------------------------------
     
 //------------------------------------------------------------------------------
@@ -27,10 +27,11 @@
       "3 Shapes",
       " "
     };
-    static char* const serial_menu_options[2] = 
+    static char* const serial_menu_options[3] = 
     {
       "Set 9600",
       "Set 115200",
+      "Start Loop"
     };
     static char* const line_menu_options[3] = 
     {
@@ -82,29 +83,10 @@ void update_menu()
     display_4 = main_menu_options[3];
     break;
     case MENU_SERIAL:
-    if(is_message_received())
-    {
-      int count = START_ZERO;
-      read_buff = read_buffer(FALSE);
-      line_buffer2[0] = NULL_TERM;
-      while((count < LCD_LENGTH*2) && read_buff[count] != NULL_TERM)
-      {       
-        if(count < LCD_LENGTH)
-        { 
-          line_buffer1[count] = read_buff[count];
-          line_buffer1[count+1] = NULL_TERM;
-        }
-        else line_buffer2[count - LCD_LENGTH] = read_buff[count];
-
-        count++;
-      }
-      line_buffer2[count] = NULL_TERM;
-      read_buffer(TRUE);
-    }
     display_1 = serial_menu_options[0];
     display_2 = serial_menu_options[1];
-    display_3 = line_buffer1;
-    display_4 = line_buffer2;
+    display_3 = serial_menu_options[2];
+    //display_4 = line_buffer1;
     break;
     case MENU_LINE:
     display_1 = line_menu_options[0];
@@ -193,6 +175,11 @@ void menu_handle_input(u_int8 sw_pressed)
         else if(menu_pressed_count == BAUD_115200)
         {
           set_current_baud(BAUD_115200);
+        }
+        else if(menu_pressed_count == BAUD_115200 + 1)
+        {
+          transmit_message("00001\0");
+          send_timer[send_buffer_count++] = system_time + 100;
         }
         else
         {

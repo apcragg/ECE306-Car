@@ -30,7 +30,7 @@ __interrupt void USCI_A0(void)
       receive_char(UCA0RXBUF);
     break;
     case 4: // Vector 4 – TXIFG
-      transmit_char();
+      transmit_char(FALSE);
     break;
     default: break;
   }

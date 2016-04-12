@@ -5,6 +5,8 @@
 #include "globals.h"
 #include "functions.h"
 #include "msp430.h"
+#include "globals.h"
+#include "timers.h"
 
 //------------------------------------------------------------------------------
 // Function Declarations
@@ -13,7 +15,7 @@
    void set_current_baud(u_int8);
    void receive_char(char);
    void transmit_message(char*);
-   void transmit_char(void);
+   void transmit_char(bool);
    volatile char* read_buffer(u_int8);
    u_int8 is_message_received();
    void transmit_loop(void);

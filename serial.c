@@ -22,6 +22,8 @@
     
     volatile static int rx_complete_flag = FALSE;
     volatile static int tx_complete_flag = TRUE;
+    
+    char num_string[NUM_BUF_SIZE];
 //------------------------------------------------------------------------------
     
 
@@ -133,6 +135,7 @@ void receive_char(char received_char)
   {
     uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
     rx_complete_flag = TRUE;
+    //uca0_rx_buff_length = 0;
   }
   else
   {
@@ -155,6 +158,8 @@ void receive_char(char received_char)
 //------------------------------------------------------------------------------
 void transmit_message(char* message)
 {
+  UCA0IE &= ~UCTXIE;
+  
   int count = START_ZERO;
   bool end = FALSE;
   
@@ -171,8 +176,7 @@ void transmit_message(char* message)
 
   uca0_tx_buff_length = (count + uca0_tx_buff_length) % BUFF_SIZE;
   
-  tx_complete_flag = FALSE;
-  transmit_char();
+  UCA0IE |= UCTXIE;
 }
 
 //------------------------------------------------------------------------------
@@ -186,14 +190,32 @@ void transmit_message(char* message)
 // Date: March 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void transmit_char()
+void transmit_char(bool yes)
 { 
+  UCA0IE &= ~ UCTXIE;
+  if(yes) tx_complete_flag = FALSE;
   if(!tx_complete_flag)
   {
-    if( uca0_tx_buff[uca0_tx_buff_pos] == NULL_TERM) tx_complete_flag = TRUE;
-    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos++];
+    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos];
     uca0_tx_buff_pos %= BUFF_SIZE - OFF_BY_ONE;
+    if(uca0_tx_buff[uca0_tx_buff_pos] == NULL_TERM)
+    {
+      UCA0TXBUF = NULL_TERM;
+      int i;
+      
+      for(i = 0; i < BUFF_SIZE - OFF_BY_ONE - uca0_tx_buff_pos; i++)
+      {
+          uca0_tx_buff[i] = uca0_tx_buff[i + uca0_tx_buff_pos + OFF_BY_ONE];
+      }
+      uca0_tx_buff_length -= uca0_tx_buff_pos + OFF_BY_ONE;
+      uca0_tx_buff_pos = 0;
+      
+      tx_complete_flag = TRUE;
+    }
+    else
+    uca0_tx_buff_pos++;
   }
+  UCA0IE |= UCTXIE;
 }
 
 //------------------------------------------------------------------------------
@@ -258,18 +280,23 @@ u_int8 is_message_received()
 void transmit_loop(void)
 {
   char tmp[NUM_BUF_SIZE];
-  char num_string[NUM_BUF_SIZE];
-  char* tmp_buf;
+  
+  volatile char* tmp_buf;
   int count, num;
   
   if(is_message_received())
   {
-    count = 0;
-    while(count < NUM_BUF_SIZE - OFF_BY_ONE) tmp[count] = tmp_buf[count];
+    tmp_buf = read_buffer(FALSE);
+    count = START_ZERO;
+    while(count < NUM_BUF_SIZE - OFF_BY_ONE)
+    {
+      tmp[count] = tmp_buf[count];
+      count++;
+    }
     
     // sorry about magic numbers, messy to do conversion without them
     // string to num - max value is 65000ish 
-    num = 0;
+    num = START_ZERO;
     num += (tmp[NUM_BUF_SIZE - 2] - '0') * 1; // first non null char 1's
     num += (tmp[NUM_BUF_SIZE - 3] - '0') * 10; // 10's
     num += (tmp[NUM_BUF_SIZE - 4] - '0') * 100; // 100's
@@ -280,14 +307,15 @@ void transmit_loop(void)
     
     // num to string
     num_string[NUM_BUF_SIZE - OFF_BY_ONE] = NULL_TERM;
-    num_string[NUM_BUF_SIZE - 2] = num % 10; // 1's
-    num_string[NUM_BUF_SIZE - 3] = ((num % 100) - (num % 10)) / 10; // 10's
-    num_string[NUM_BUF_SIZE - 4] = ((num % 1000) - (num % 100)) / 100; // 100's
-    num_string[NUM_BUF_SIZE - 5] = ((num % 10000) - (num % 1000)) / 1000; // 1000's
-    num_string[NUM_BUF_SIZE - 6] = ((num) - (num % 10000)) / 10000; // 10000's
-    
-    display_4 = num_string;
+    num_string[NUM_BUF_SIZE - 2] = DIG_TO_CH(num % 10); // 1's
+    num_string[NUM_BUF_SIZE - 3] = DIG_TO_CH(((num % 100) - (num % 10)) / 10); // 10's
+    num_string[NUM_BUF_SIZE - 4] = DIG_TO_CH(((num % 1000) - (num % 100)) / 100); // 100's
+    num_string[NUM_BUF_SIZE - 5] = DIG_TO_CH(((num % 10000) - (num % 1000)) / 1000); // 1000's
+    num_string[NUM_BUF_SIZE - 6] = DIG_TO_CH(((num) - (num % 10000)) / 10000); // 10000's
     
     if(num <= DEMO_COUNT) transmit_message(num_string);
+    send_timer[send_buffer_count++] = system_time + 300;
+    display_4 = num_string;
+    read_buffer(TRUE);
   }
 }

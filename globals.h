@@ -21,3 +21,6 @@ extern char posL2;
 extern char posL3;
 extern char posL4;
 extern volatile unsigned char control_state[CNTL_STATE_INDEX];
+
+extern long int send_timer[10];
+extern int send_buffer_count;

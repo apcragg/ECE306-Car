@@ -35,6 +35,8 @@ char posL1;
 char posL2;
 char posL3;
 char posL4;
+long int send_timer[10];
+int send_buffer_count = 0;
 
 void setup_pwm(void);
 
@@ -87,6 +89,21 @@ void main(void){
     
     update_switches();                 // Check for switch state change
     update_menu();
+    transmit_loop();
+    
+    if(send_buffer_count > 0)
+    {
+      if(system_time > send_timer[0])
+      {
+        int i;
+        transmit_char(TRUE);
+        for(i = OFF_BY_ONE; i < send_buffer_count; i++)
+        {
+          send_timer[i - OFF_BY_ONE] = send_timer[i];
+        }
+        send_buffer_count--;
+      }
+    }
     
     if(time_sequence > SECOND_AND_A_QUARTER)
       time_sequence = START_VAL;
