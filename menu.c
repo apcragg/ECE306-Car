@@ -82,10 +82,10 @@ void update_menu()
     display_4 = main_menu_options[3];
     break;
     case MENU_SERIAL:
-    if(is_message_received())
+    if(uca0_is_message_received())
     {
       int count = START_ZERO;
-      read_buff = read_buffer(FALSE);
+      read_buff = uca0_read_buffer(FALSE);
       line_buffer2[0] = NULL_TERM;
       while((count < LCD_LENGTH*2) && read_buff[count] != NULL_TERM)
       {       
@@ -99,7 +99,6 @@ void update_menu()
         count++;
       }
       line_buffer2[count] = NULL_TERM;
-      read_buffer(TRUE);
     }
     display_1 = serial_menu_options[0];
     display_2 = serial_menu_options[1];
@@ -187,12 +186,12 @@ void menu_handle_input(u_int8 sw_pressed)
       case MENU_SERIAL:
         if(menu_pressed_count == BAUD_9600)
         {
-          set_current_baud(BAUD_9600);
-          transmit_message("Hello World");
+          uca0_set_current_baud(BAUD_9600);
+          uca0_transmit_message("Hello World");
         }
         else if(menu_pressed_count == BAUD_115200)
         {
-          set_current_baud(BAUD_115200);
+          uca0_set_current_baud(BAUD_115200);
         }
         else
         {

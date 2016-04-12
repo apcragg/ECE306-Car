@@ -27,10 +27,10 @@ __interrupt void USCI_A0(void)
     case 0: // Vector 0 - no interrupt
     break;
     case 2: // Vector 2 - RXIFG
-      receive_char(UCA0RXBUF);
+      uca0_receive_char(UCA0RXBUF);
     break;
     case 4: // Vector 4 – TXIFG
-      transmit_char();
+      uca0_transmit_char();
     break;
     default: break;
   }

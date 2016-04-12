@@ -20,6 +20,7 @@
 #include  "adc.h"
 #include  "menu.h"
 #include  "serial.h"
+#include  "command.h"
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
@@ -87,6 +88,12 @@ void main(void){
     
     update_switches();                 // Check for switch state change
     update_menu();
+    
+    if(uca0_is_message_received())
+    {
+      update_menu();
+      receive_command(uca0_read_buffer(TRUE));
+    }
     
     if(time_sequence > SECOND_AND_A_QUARTER)
       time_sequence = START_VAL;
