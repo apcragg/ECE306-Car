@@ -203,12 +203,12 @@ void transmit_char(bool yes)
       UCA0TXBUF = NULL_TERM;
       int i;
       
-      for(i = 0; i < BUFF_SIZE - OFF_BY_ONE - uca0_tx_buff_pos; i++)
+      for(i = START_ZERO; i < BUFF_SIZE - OFF_BY_ONE - uca0_tx_buff_pos; i++)
       {
           uca0_tx_buff[i] = uca0_tx_buff[i + uca0_tx_buff_pos + OFF_BY_ONE];
       }
       uca0_tx_buff_length -= uca0_tx_buff_pos + OFF_BY_ONE;
-      uca0_tx_buff_pos = 0;
+      uca0_tx_buff_pos = START_ZERO;
       
       tx_complete_flag = TRUE;
     }
@@ -313,9 +313,13 @@ void transmit_loop(void)
     num_string[NUM_BUF_SIZE - 5] = DIG_TO_CH(((num % 10000) - (num % 1000)) / 1000); // 1000's
     num_string[NUM_BUF_SIZE - 6] = DIG_TO_CH(((num) - (num % 10000)) / 10000); // 10000's
     
-    if(num <= DEMO_COUNT) transmit_message(num_string);
-    send_timer[send_buffer_count++] = system_time + 300;
-    display_4 = num_string;
+    if(num <= DEMO_COUNT) 
+    {
+      transmit_message(num_string);
+      send_timer[send_buffer_count++] = system_time + HALF_SECOND;
+      display_4 = num_string;
+      
+    }
     read_buffer(TRUE);
   }
 }
