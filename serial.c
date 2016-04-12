@@ -12,8 +12,8 @@
 //------------------------------------------------------------------------------
 // Module Scope Globals
     static u_int8 current_baud = BAUD_9600;
-    static char uca0_rx_buff[BUF_SIZE];
-    static char uca0_tx_buff[BUF_SIZE];
+    static char uca0_rx_buff[BUFF_SIZE];
+    static char uca0_tx_buff[BUFF_SIZE];
     
     static int uca0_rx_buff_length = 0;
     static int uca0_tx_buff_length = 0;
@@ -21,7 +21,7 @@
     static int uca0_tx_buff_pos = 0;
     
     static int rx_complete_flag = FALSE;
-    static int tx_ready_flag = TRUE;
+    static int tx_complete_flag = TRUE;
 //------------------------------------------------------------------------------
     
 
@@ -45,7 +45,8 @@ void init_serial_uart()
  
   UCA0BRW = 52; // 9,600 Baud
   UCA0MCTLW = 0x4911 ;
-  UCA0CTL1 &= ~UCSWRST; // Release from reset
+  UCA0CTL1 &= ~UCSWRST; // Release from rese
+  UCA0IV = CLEAR_REGISTER;
   UCA0IE |= UCRXIE; // Enable RX interrupt
   UCA0IE |= UCTXIE; // Enable TX interrupt
 
@@ -100,6 +101,7 @@ void set_current_baud(u_int8 set_baud_rate)
     UCA0BRW = 52; // 9,600 Baud
     UCA0MCTLW = 0x4911;
     UCA0CTL1 &= ~UCSWRST; // Release from reset
+    
     UCA0IE |= UCRXIE; // Enable RX interrupt
     UCA0IE |= UCTXIE; // Enable TX interrupt
   }
@@ -127,10 +129,17 @@ void set_current_baud(u_int8 set_baud_rate)
 //------------------------------------------------------------------------------
 void receive_char(char received_char)
 {
-  uca0_rx_buff[uca0_rx_buff_length++] = received_char;
-  uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
-  if(uca0_rx_buff_length == BUF_SIZE - OFF_BY_ONE) uca0_rx_buff_length = 0;
-  if(received_char == NULL_TERM) rx_complete_flag = TRUE;
+  if(received_char == NULL_TERM || received_char == C_RETURN)
+  {
+    uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
+    rx_complete_flag = TRUE;
+  }
+  else
+  {
+    uca0_rx_buff[uca0_rx_buff_length++] = received_char;
+    uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
+    uca0_rx_buff_length %= BUFF_SIZE - OFF_BY_ONE;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -146,18 +155,24 @@ void receive_char(char received_char)
 //------------------------------------------------------------------------------
 void transmit_message(char* message)
 {
-  int count = uca0_tx_buff_length;
-  if(tx_ready_flag)
+  int count = START_ZERO;
+  bool end = FALSE;
+  
+  while((count + uca0_tx_buff_length < BUFF_SIZE - OFF_BY_ONE) && !end) 
   {
-    tx_ready_flag = FALSE;
-    while(count < BUF_SIZE - OFF_BY_ONE) 
-    {
-      uca0_tx_buff[count] = message[count];
-      count++;
-    }
-    uca0_tx_buff[BUF_SIZE - OFF_BY_ONE] = NULL_TERM;
+    uca0_tx_buff[(count + uca0_tx_buff_length) % BUFF_SIZE] = message[count];
+   
+    count++;
+   
+    if(message[count] == NULL_TERM) 
+      end = TRUE;
   }
-  UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_length++];
+  uca0_tx_buff[(count++ + uca0_tx_buff_length) % BUFF_SIZE] = NULL_TERM;
+
+  uca0_tx_buff_length = (count + uca0_tx_buff_length) % BUFF_SIZE;
+  
+  tx_complete_flag = FALSE;
+  transmit_char();
 }
 
 //------------------------------------------------------------------------------
@@ -172,26 +187,12 @@ void transmit_message(char* message)
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
 void transmit_char()
-{
-  int count;
-  
-  if(!tx_ready_flag)
+{ 
+  if(!tx_complete_flag)
   {
-    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos];
-    if(uca0_tx_buff[uca0_tx_buff_pos++] == NULL_TERM)
-    {
-      tx_ready_flag = TRUE;
-      uca0_tx_buff_length -= uca0_tx_buff_pos; // allows transmitting multiple 
-                                               // at same time
-      for(count = 0; count < BUF_SIZE - OFF_BY_ONE; count++)
-      {
-        uca0_tx_buff[count] = uca0_tx_buff[count + uca0_tx_buff_pos]; // shifts
-                                                                      // buffer
-                                                                      // back
-      }
-      
-      uca0_tx_buff_pos = 0; // resets buffer pointer for message transmitting
-    }
+    if( uca0_tx_buff[uca0_tx_buff_pos] == NULL_TERM) tx_complete_flag = TRUE;
+    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos++];
+    uca0_tx_buff_pos %= BUFF_SIZE - OFF_BY_ONE;
   }
 }
 
@@ -209,10 +210,15 @@ void transmit_char()
 //------------------------------------------------------------------------------
 char* read_buffer(u_int8 reset)
 {
+  int i;
+  
   if(rx_complete_flag)
   {
     if(reset) 
     {
+      for(i = uca0_rx_buff_length; i < BUFF_SIZE; i++)
+        uca0_rx_buff[i] = NULL_TERM;
+      
       rx_complete_flag = FALSE;
       uca0_rx_buff_length = 0;
     }
@@ -284,21 +290,4 @@ void transmit_loop(void)
     
     if(num <= DEMO_COUNT) transmit_message(num_string);
   }
-}
-
-//------------------------------------------------------------------------------
-// Function Name : transmit_loop
-//
-// Description: This function clears the buffer if it has any left over
-// Arguements: void
-// Returns:    void
-//
-// Author: Andrew Cragg
-// Date: March 2016
-// Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
-//------------------------------------------------------------------------------
-void start_transmit_from_buffer()
-{
-  tx_ready_flag = FALSE; // opposite of what you'd think but it starts the
-                         // TX interrupts
 }

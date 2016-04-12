@@ -34,6 +34,7 @@ typedef unsigned char bool;
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
 #define NULL                    (0)
 #define OFF_BY_ONE              (1)
+#define START_ZERO              (0)
 
 #define TENS                    (10)
 #define HUNDREDS                (100)
@@ -51,7 +52,7 @@ typedef unsigned char bool;
 #define LCD_HOME_L4         	(0xE0)
 #define LCD_BASE                (0x00)
 #define NULL_TERM               (0x00)
-#define LCD_LENGTH              (11)
+#define LCD_LENGTH              (10)
 
 //Timeing Values
 #define FALSE                   (0x00)
@@ -178,7 +179,8 @@ typedef unsigned char bool;
 #define BAUD_115200_S           "115600 Baud"
 #define BAUD_9600_VAL           (9600)
 #define BAUD_115600_VAL         (115600)
-
+#define C_RETURN                ('\r')
+  
 // Line things
 #define RIGHT_DETECT            (0)
 #define LEFT_DETECT             (1)
@@ -204,7 +206,7 @@ typedef unsigned char bool;
 #define RELEASED_DEBOUNCE       (200)  // Debounce time for switch press
 
 // Serial things
-#define BUF_SIZE                (64)
+#define BUFF_SIZE                (64)
 #define NUM_BUF_SIZE            (6)
 #define DEMO_COUNT              (100)
 #define RESET_COUNT             (64535)

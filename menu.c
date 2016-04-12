@@ -12,7 +12,7 @@
 
 //------------------------------------------------------------------------------
 // Local Varriables
-    static u_int8 current_menu = MENU_MAIN;
+    static u_int8 current_menu = MENU_SERIAL;
     static u_int8 menu_pressed_count = 0;
     static char buffer[11] = "0";
     static const u_int8 num_menu_options[4] = {4, 3, 4, 5};
@@ -27,11 +27,10 @@
       "3 Shapes",
       " "
     };
-    static char* const serial_menu_options[3] = 
+    static char* const serial_menu_options[2] = 
     {
-      "Set 9600 B",
-      "Start Loop",
-      "Loop Count:",
+      "Set 9600",
+      "Set 115200",
     };
     static char* const line_menu_options[3] = 
     {
@@ -46,6 +45,9 @@
       "3 TODO",
       "4 TODO"
     };
+    static char line_buffer1[11];
+    static char line_buffer2[11];
+    
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -63,7 +65,8 @@
 void update_menu()
 {
   int adc_val;
-   
+  char* read_buff;
+
   posL1 = DISPLAY_LINE_0;
   posL2 = DISPLAY_LINE_0;
   posL3 = DISPLAY_LINE_0;
@@ -79,11 +82,29 @@ void update_menu()
     display_4 = main_menu_options[3];
     break;
     case MENU_SERIAL:
+    if(is_message_received())
+    {
+      int count = START_ZERO;
+      read_buff = read_buffer(FALSE);
+      line_buffer2[0] = NULL_TERM;
+      while((count < LCD_LENGTH*2) && read_buff[count] != NULL_TERM)
+      {       
+        if(count < LCD_LENGTH)
+        { 
+          line_buffer1[count] = read_buff[count];
+          line_buffer1[count+1] = NULL_TERM;
+        }
+        else line_buffer2[count - LCD_LENGTH] = read_buff[count];
+
+        count++;
+      }
+      line_buffer2[count] = NULL_TERM;
+      read_buffer(TRUE);
+    }
     display_1 = serial_menu_options[0];
     display_2 = serial_menu_options[1];
-    display_3 = serial_menu_options[2];
-    //display_4 = is_message_received() ? read_buffer(FALSE) : display_4;
-    //get_current_baud() == BAUD_9600 ? BAUD_9600_S : BAUD_115200_S;
+    display_3 = line_buffer1;
+    display_4 = line_buffer2;
     break;
     case MENU_LINE:
     display_1 = line_menu_options[0];
@@ -113,10 +134,14 @@ void update_menu()
   
   switch(menu_pressed_count)
   {
-    case 1: if((system_time % 300) > 150) display_1 = " "; break;
-    case 2: if((system_time % 300) > 150) display_2 = " "; break;
-    case 3: if((system_time % 300) > 150) display_3 = " "; break;
-    case 4: if((system_time % 300) > 150) display_4 = " "; break;
+    case DISPLAY_LINE_1: if((system_time % SECOND) > HALF_SECOND) 
+      display_1 = " "; break;
+    case DISPLAY_LINE_2: if((system_time % SECOND) > HALF_SECOND) 
+      display_2 = " "; break;
+    case DISPLAY_LINE_3: if((system_time % SECOND) > HALF_SECOND)
+      display_3 = " "; break;
+    case DISPLAY_LINE_4: if((system_time % SECOND) > HALF_SECOND) 
+      display_4 = " "; break;
   } 
 }
 
@@ -147,6 +172,7 @@ void menu_handle_input(u_int8 sw_pressed)
         if(menu_pressed_count == MENU_SERIAL)
         {
           current_menu = MENU_SERIAL;
+          display_3 = " ";
         }
         else if(menu_pressed_count == MENU_LINE)
         {
@@ -166,8 +192,7 @@ void menu_handle_input(u_int8 sw_pressed)
         }
         else if(menu_pressed_count == BAUD_115200)
         {
-          //set_current_baud(BAUD_115200);
-          transmit_message("00001");
+          set_current_baud(BAUD_115200);
         }
         else
         {
