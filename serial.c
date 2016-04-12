@@ -11,17 +11,17 @@
 
 //------------------------------------------------------------------------------
 // Module Scope Globals
-    static u_int8 current_baud = BAUD_9600;
-    static char uca0_rx_buff[BUFF_SIZE];
-    static char uca0_tx_buff[BUFF_SIZE];
+    volatile static u_int8 current_baud = BAUD_9600;
+    volatile static char uca0_rx_buff[BUFF_SIZE];
+    volatile  char uca0_tx_buff[BUFF_SIZE];
     
-    static int uca0_rx_buff_length = 0;
-    static int uca0_tx_buff_length = 0;
+    volatile static int uca0_rx_buff_length = 0;
+    volatile static int uca0_tx_buff_length = 0;
     
-    static int uca0_tx_buff_pos = 0;
+    volatile static int uca0_tx_buff_pos = 0;
     
-    static int rx_complete_flag = FALSE;
-    static int tx_complete_flag = TRUE;
+    volatile static int rx_complete_flag = FALSE;
+    volatile static int tx_complete_flag = TRUE;
 //------------------------------------------------------------------------------
     
 
@@ -208,7 +208,7 @@ void transmit_char()
 // Date: March 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-char* read_buffer(u_int8 reset)
+volatile char* read_buffer(u_int8 reset)
 {
   int i;
   

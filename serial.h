@@ -14,7 +14,7 @@
    void receive_char(char);
    void transmit_message(char*);
    void transmit_char(void);
-   char* read_buffer(u_int8);
+   volatile char* read_buffer(u_int8);
    u_int8 is_message_received();
    void transmit_loop(void);
    void start_transmit_from_buffer();

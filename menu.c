@@ -65,7 +65,7 @@
 void update_menu()
 {
   int adc_val;
-  char* read_buff;
+  volatile char* read_buff;
 
   posL1 = DISPLAY_LINE_0;
   posL2 = DISPLAY_LINE_0;
