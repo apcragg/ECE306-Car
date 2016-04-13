@@ -233,7 +233,7 @@ void init_port_J(void)
   //Set Port Output States other than Zero
   PJOUT &= ~IOT_WAKEUP;
   PJOUT &= ~IOT_FACTORY;
-  PJOUT &= ~IOT_STA_MINIAP;
+  PJOUT |= IOT_STA_MINIAP;
   PJOUT &= ~IOT_RESET;
   
   //Set Port Pullup Resistors

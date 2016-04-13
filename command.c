@@ -19,8 +19,9 @@
 #define AKNOWLEDGE_MESSAGE         ("Good News Everyone!\n\r")
 #define SLOW_BAUD                  ("~S")
 #define SLOW_BAUD_MESSAGE          ("Set 9600B\n\r")
+#define SLOW_BAUD_COMMAND          ("AT\r")//+S.SCFG=console1_speed,9600\r")
 #define FAST_BAUD                  ("~F")
-#define FAST_BAUD_MESSAGE          ("Set 115kB\n\r")
+#define FAST_BAUD_MESSAGE          ("Set 115200B\n\r")
 
 void receive_command(char* command)
 {
@@ -30,8 +31,9 @@ void receive_command(char* command)
   }
   else if(compare(command, SLOW_BAUD))
   {
-    uca1_set_current_baud(BAUD_9600);
-    uca0_transmit_message(SLOW_BAUD_MESSAGE);
+    uca1_set_current_baud(BAUD_115200);
+    uca1_transmit_message(SLOW_BAUD_COMMAND);
+    uca0_transmit_message(SLOW_BAUD_MESSAGE);   
   }
   else if(compare(command, FAST_BAUD))
   {

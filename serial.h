@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "functions.h"
 #include "msp430.h"
+#include "timers.h"
 
 //------------------------------------------------------------------------------
 // Function Declarations

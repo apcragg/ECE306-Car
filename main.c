@@ -95,6 +95,11 @@ void main(void){
       receive_command(uca0_read_buffer(TRUE));
     }
     
+    if(uca1_is_message_received())
+    {
+      update_menu();
+    }
+    
     if(time_sequence > SECOND_AND_A_QUARTER)
       time_sequence = START_VAL;
     

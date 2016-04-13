@@ -206,7 +206,7 @@ typedef unsigned char bool;
 #define RELEASED_DEBOUNCE       (200)  // Debounce time for switch press
 
 // Serial things
-#define BUFF_SIZE                (64)
+#define BUFF_SIZE               (128)
 #define NUM_BUF_SIZE            (6)
 #define DEMO_COUNT              (100)
 #define RESET_COUNT             (64535)

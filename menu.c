@@ -85,7 +85,7 @@ void update_menu()
     if(uca0_is_message_received())
     {
       int count = START_ZERO;
-      read_buff = uca0_read_buffer(FALSE);
+      read_buff = uca1_read_buffer(FALSE);
       line_buffer2[0] = NULL_TERM;
       while((count < LCD_LENGTH*2) && read_buff[count] != NULL_TERM)
       {       

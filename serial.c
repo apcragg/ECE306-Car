@@ -49,6 +49,10 @@
 //------------------------------------------------------------------------------
 void init_serial_uart()
 {  
+  PJOUT |= IOT_RESET;
+  
+  five_msec_delay(QUARTER_SECOND);
+  
   // Configure UART 0
   UCA0CTLW0 = 0; // Use word register
   UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
@@ -180,7 +184,8 @@ void uca0_receive_char(char received_char)
 
 void uca1_receive_char(char received_char)
 {
-  if(received_char == NULL_TERM || received_char == C_RETURN)
+  if(received_char == NULL_TERM || received_char == C_RETURN || 
+     received_char == '\n')
   {
     uca1_rx_buff[uca1_rx_buff_length] = NULL_TERM;
     uca1_rx_complete_flag = TRUE;
@@ -209,13 +214,13 @@ void uca0_transmit_message(char* message)
   int count = START_ZERO;
   bool end = FALSE;
   
-  while((count + uca0_tx_buff_length < BUFF_SIZE - OFF_BY_ONE) && !end) 
+  while(!end) 
   {
     uca0_tx_buff[(count + uca0_tx_buff_length) % BUFF_SIZE] = message[count];
    
     count++;
    
-    if(message[count] == NULL_TERM) 
+    if(message[count] == NULL_TERM || count > BUFF_SIZE) 
       end = TRUE;
   }
   uca0_tx_buff[(count++ + uca0_tx_buff_length) % BUFF_SIZE] = NULL_TERM;
@@ -231,16 +236,16 @@ void uca1_transmit_message(char* message)
   int count = START_ZERO;
   bool end = FALSE;
   
-  while((count + uca1_tx_buff_length < BUFF_SIZE - OFF_BY_ONE) && !end) 
+  while(!end) 
   {
     uca1_tx_buff[(count + uca1_tx_buff_length) % BUFF_SIZE] = message[count];
    
     count++;
    
-    if(message[count] == NULL_TERM) 
+    if(message[count] == C_RETURN || count > BUFF_SIZE) 
       end = TRUE;
   }
-  uca1_tx_buff[(count++ + uca1_tx_buff_length) % BUFF_SIZE] = NULL_TERM;
+  uca1_tx_buff[(count++ + uca1_tx_buff_length) % BUFF_SIZE] = C_RETURN;
 
   uca1_tx_buff_length = (count + uca1_tx_buff_length) % BUFF_SIZE;
   
@@ -266,7 +271,7 @@ void uca0_transmit_char()
     if( uca0_tx_buff[uca0_tx_buff_pos] == NULL_TERM)
       uca0_tx_complete_flag = TRUE;
     UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos++];
-    uca0_tx_buff_pos %= BUFF_SIZE - OFF_BY_ONE;
+    uca0_tx_buff_pos %= BUFF_SIZE;
   }
 }
 
@@ -274,10 +279,10 @@ void uca1_transmit_char()
 { 
   if(!uca1_tx_complete_flag)
   {
-    if( uca1_tx_buff[uca1_tx_buff_pos] == NULL_TERM)
+    if(uca1_tx_buff[uca1_tx_buff_pos] == C_RETURN)
       uca1_tx_complete_flag = TRUE;
     UCA1TXBUF = uca1_tx_buff[uca1_tx_buff_pos++];
-    uca1_tx_buff_pos %= BUFF_SIZE - OFF_BY_ONE;
+    uca1_tx_buff_pos %= BUFF_SIZE;
   }
 }
 
@@ -344,4 +349,9 @@ char* uca1_read_buffer(u_int8 reset)
 u_int8 uca0_is_message_received()
 {
   return uca0_rx_complete_flag;
+}
+
+u_int8 uca1_is_message_received()
+{
+  return uca1_rx_complete_flag;
 }
