@@ -21,3 +21,4 @@ extern char posL2;
 extern char posL3;
 extern char posL4;
 extern volatile unsigned char control_state[CNTL_STATE_INDEX];
+extern bool uca1_ready;

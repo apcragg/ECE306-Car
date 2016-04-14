@@ -65,7 +65,7 @@
 void update_menu()
 {
   int adc_val;
-  volatile char* read_buff;
+  BufferString read_buff;
 
   posL1 = DISPLAY_LINE_0;
   posL2 = DISPLAY_LINE_0;
@@ -87,14 +87,14 @@ void update_menu()
       int count = START_ZERO;
       read_buff = uca1_read_buffer(FALSE);
       line_buffer2[0] = NULL_TERM;
-      while((count < LCD_LENGTH*2) && read_buff[count] != NULL_TERM)
+      while((count < LCD_LENGTH*2) && read_buff.head[count] != NULL_TERM)
       {       
         if(count < LCD_LENGTH)
         { 
-          line_buffer1[count] = read_buff[count];
+          line_buffer1[count] = read_buff.head[count];
           line_buffer1[count+1] = NULL_TERM;
         }
-        else line_buffer2[count - LCD_LENGTH] = read_buff[count];
+        else line_buffer2[count - LCD_LENGTH] = read_buff.head[count];
 
         count++;
       }
@@ -187,7 +187,7 @@ void menu_handle_input(u_int8 sw_pressed)
         if(menu_pressed_count == BAUD_9600)
         {
           uca0_set_current_baud(BAUD_9600);
-          uca0_transmit_message("Hello World");
+          uca0_transmit_message("Hello World", NO_OFFSET);
         }
         else if(menu_pressed_count == BAUD_115200)
         {

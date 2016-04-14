@@ -15,24 +15,31 @@
     static char uca0_rx_buff[BUFF_SIZE];
     volatile  char uca0_tx_buff[BUFF_SIZE];
     
-    volatile static int uca0_rx_buff_length = 0;
-    volatile static int uca0_tx_buff_length = 0;
+    volatile static int uca0_rx_buff_end = 0;
+    volatile static int uca0_tx_buff_end = 0;
     
-    volatile static int uca0_tx_buff_pos = 0;
+    volatile static int uca0_tx_buff_start= 0;
+    volatile static int uca0_rx_buff_start = 0;
     
     volatile static int uca0_rx_complete_flag = FALSE;
     volatile static int uca0_tx_complete_flag = TRUE;
     
     static char uca1_rx_buff[BUFF_SIZE];
-    volatile  char uca1_tx_buff[BUFF_SIZE];
+    volatile static char uca1_tx_buff[BUFF_SIZE];
     
-    volatile static int uca1_rx_buff_length = 0;
-    volatile static int uca1_tx_buff_length = 0;
+    volatile static int uca1_rx_buff_end = 0;
+    volatile static int uca1_tx_buff_end = 0;
     
-    volatile static int uca1_tx_buff_pos = 0;
+    volatile static int uca1_tx_buff_start = 0;
+    volatile static int uca1_rx_buff_start = 0;
     
     volatile static int uca1_rx_complete_flag = FALSE;
     volatile static int uca1_tx_complete_flag = TRUE;
+    
+    volatile static int uca0_num_buffered = 0;
+    volatile static int uca1_num_buffered = 0;
+    
+    bool uca1_ready = FALSE;
 //------------------------------------------------------------------------------
     
 
@@ -49,6 +56,8 @@
 //------------------------------------------------------------------------------
 void init_serial_uart()
 {  
+  five_msec_delay(QUARTER_SECOND);
+  
   PJOUT |= IOT_RESET;
   
   five_msec_delay(QUARTER_SECOND);
@@ -62,6 +71,7 @@ void init_serial_uart()
   UCA0MCTLW = 0x4911 ;
   UCA0CTL1 &= ~UCSWRST; // Release from rese
   UCA0IV = CLEAR_REGISTER;
+  UCA0IFG &= ~UCTXIFG;
   UCA0IE |= UCRXIE; // Enable RX interrupt
   UCA0IE |= UCTXIE; // Enable TX interrupt
 
@@ -73,6 +83,7 @@ void init_serial_uart()
   UCA1BRW = 52; // 9,600 Baud
   UCA1MCTLW = 0x4911 ;
   UCA1CTL1 &= ~UCSWRST; // Release from reset
+  UCA1IFG &= ~UCTXIFG;
   UCA1IE |= UCRXIE; // Enable RX interrupt
   UCA1IE |= UCTXIE; // Enable TX interrupt
 }
@@ -116,7 +127,7 @@ void uca0_set_current_baud(u_int8 set_baud_rate)
     UCA0BRW = 52; // 9,600 Baud
     UCA0MCTLW = 0x4911;
     UCA0CTL1 &= ~UCSWRST; // Release from reset
-    
+    UCA0IFG &= ~UCTXIFG;
     UCA0IE |= UCRXIE; // Enable RX interrupt
     UCA0IE |= UCTXIE; // Enable TX interrupt
   }
@@ -126,6 +137,7 @@ void uca0_set_current_baud(u_int8 set_baud_rate)
     UCA0BRW = 4; // 115,200 Baud
     UCA0MCTLW = 0x5551 ;
     UCA0CTL1 &= ~UCSWRST; // Release from reset
+    UCA0IFG &= ~UCTXIFG;
     UCA0IE |= UCRXIE; // Enable RX interrupt
     UCA0IE |= UCTXIE; // Enable TX interrupt
   }
@@ -141,7 +153,7 @@ void uca1_set_current_baud(u_int8 set_baud_rate)
     UCA1BRW = 52; // 9,600 Baud
     UCA1MCTLW = 0x4911;
     UCA1CTL1 &= ~UCSWRST; // Release from reset
-    
+    UCA1IFG &= ~UCTXIFG;
     UCA1IE |= UCRXIE; // Enable RX interrupt
     UCA1IE |= UCTXIE; // Enable TX interrupt
   }
@@ -151,6 +163,7 @@ void uca1_set_current_baud(u_int8 set_baud_rate)
     UCA1BRW = 4; // 115,200 Baud
     UCA1MCTLW = 0x5551 ;
     UCA1CTL1 &= ~UCSWRST; // Release from reset
+    UCA1IFG &= ~UCTXIFG;
     UCA1IE |= UCRXIE; // Enable RX interrupt
     UCA1IE |= UCTXIE; // Enable TX interrupt
   }
@@ -171,30 +184,31 @@ void uca0_receive_char(char received_char)
 {
   if(received_char == NULL_TERM || received_char == C_RETURN)
   {
-    uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
+    uca0_rx_buff[uca0_rx_buff_end++] = NULL_TERM;
     uca0_rx_complete_flag = TRUE;
   }
   else
   {
-    uca0_rx_buff[uca0_rx_buff_length++] = received_char;
-    uca0_rx_buff[uca0_rx_buff_length] = NULL_TERM;
-    uca0_rx_buff_length %= BUFF_SIZE - OFF_BY_ONE;
+    uca0_rx_buff[uca0_rx_buff_end++] = received_char;
+    uca0_rx_buff[uca0_rx_buff_end] = NULL_TERM;
+    uca0_rx_buff_end %= BUFF_SIZE;
   }
 }
 
 void uca1_receive_char(char received_char)
 {
-  if(received_char == NULL_TERM || received_char == C_RETURN || 
+  if(//received_char == NULL_TERM || received_char == C_RETURN || 
      received_char == '\n')
   {
-    uca1_rx_buff[uca1_rx_buff_length] = NULL_TERM;
+    uca1_rx_buff[uca1_rx_buff_end++] = '\n';
+    uca1_rx_buff[uca1_rx_buff_end] = NULL_TERM;
     uca1_rx_complete_flag = TRUE;
   }
   else
   {
-    uca1_rx_buff[uca1_rx_buff_length++] = received_char;
-    uca1_rx_buff[uca1_rx_buff_length] = NULL_TERM;
-    uca1_rx_buff_length %= BUFF_SIZE - OFF_BY_ONE;
+    uca1_rx_buff[uca1_rx_buff_end++] = received_char;
+    uca1_rx_buff[uca1_rx_buff_end] = NULL_TERM;
+    uca1_rx_buff_end %= BUFF_SIZE;
   }
 }
 
@@ -209,48 +223,72 @@ void uca1_receive_char(char received_char)
 // Date: March 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-void uca0_transmit_message(char* message)
+void uca0_transmit_message(char* message, int offset)
 {
   int count = START_ZERO;
   bool end = FALSE;
   
   while(!end) 
   {
-    uca0_tx_buff[(count + uca0_tx_buff_length) % BUFF_SIZE] = message[count];
+    uca0_tx_buff[(count + uca0_tx_buff_end) % BUFF_SIZE] 
+      = message[(offset + count) % BUFF_SIZE];
    
     count++;
    
-    if(message[count] == NULL_TERM || count > BUFF_SIZE) 
+    if((message[(offset + count) % BUFF_SIZE] == NULL_TERM || count >= BUFF_SIZE)) 
+    {
+      if(count == OFF_BY_ONE) 
+        count--;
       end = TRUE;
+    }
   }
-  uca0_tx_buff[(count++ + uca0_tx_buff_length) % BUFF_SIZE] = NULL_TERM;
+  uca0_tx_buff[(count++ + uca0_tx_buff_end) % BUFF_SIZE] = NULL_TERM;
 
-  uca0_tx_buff_length = (count + uca0_tx_buff_length) % BUFF_SIZE;
+  uca0_tx_buff_end = (count + uca0_tx_buff_end) % BUFF_SIZE;
   
-  uca0_tx_complete_flag = FALSE;
-  uca0_transmit_char();
+  if(uca0_tx_complete_flag)
+  {
+    uca0_tx_complete_flag = FALSE;
+    UCA0IFG |= UCTXIFG;
+  }
+  else
+  {
+    uca0_num_buffered++;
+  }
 }
 
-void uca1_transmit_message(char* message)
+void uca1_transmit_message(char* message, int offset)
 {
   int count = START_ZERO;
   bool end = FALSE;
   
   while(!end) 
-  {
-    uca1_tx_buff[(count + uca1_tx_buff_length) % BUFF_SIZE] = message[count];
+  { 
+    uca1_tx_buff[(count + uca1_tx_buff_end) % BUFF_SIZE] 
+      = message[(offset + count) % BUFF_SIZE];
    
     count++;
    
-    if(message[count] == C_RETURN || count > BUFF_SIZE) 
+    if(message[(offset + count) % BUFF_SIZE] == C_RETURN || count >= BUFF_SIZE) 
+    {
+      if(count == OFF_BY_ONE) 
+        count--;
       end = TRUE;
+    }
   }
-  uca1_tx_buff[(count++ + uca1_tx_buff_length) % BUFF_SIZE] = C_RETURN;
-
-  uca1_tx_buff_length = (count + uca1_tx_buff_length) % BUFF_SIZE;
+  uca1_tx_buff[(count++ + uca1_tx_buff_end) % BUFF_SIZE] = C_RETURN;
   
-  uca1_tx_complete_flag = FALSE;
-  uca1_transmit_char();
+  uca1_tx_buff_end = (count + uca1_tx_buff_end) % BUFF_SIZE;
+  
+  if(uca1_tx_complete_flag)
+  {
+    uca1_tx_complete_flag = FALSE;
+    UCA1IFG |= UCTXIFG;
+  }
+  else
+  {
+    uca1_num_buffered++;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -268,10 +306,15 @@ void uca0_transmit_char()
 { 
   if(!uca0_tx_complete_flag)
   {
-    if( uca0_tx_buff[uca0_tx_buff_pos] == NULL_TERM)
-      uca0_tx_complete_flag = TRUE;
-    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_pos++];
-    uca0_tx_buff_pos %= BUFF_SIZE;
+    if( uca0_tx_buff[uca0_tx_buff_start] == NULL_TERM)
+    {
+      if(uca0_num_buffered) 
+        uca0_num_buffered--;
+      else
+        uca0_tx_complete_flag = TRUE;          
+    }
+    UCA0TXBUF = uca0_tx_buff[uca0_tx_buff_start++];
+    uca0_tx_buff_start %= BUFF_SIZE;
   }
 }
 
@@ -279,10 +322,16 @@ void uca1_transmit_char()
 { 
   if(!uca1_tx_complete_flag)
   {
-    if(uca1_tx_buff[uca1_tx_buff_pos] == C_RETURN)
-      uca1_tx_complete_flag = TRUE;
-    UCA1TXBUF = uca1_tx_buff[uca1_tx_buff_pos++];
-    uca1_tx_buff_pos %= BUFF_SIZE;
+    if(uca1_tx_buff[uca1_tx_buff_start] == C_RETURN)
+    {
+      UCA1TXBUF = uca1_tx_buff[uca1_tx_buff_start];
+      if(uca1_num_buffered) 
+        uca1_num_buffered--;
+      else
+        uca1_tx_complete_flag = TRUE;       
+    }
+      UCA1TXBUF = uca1_tx_buff[uca1_tx_buff_start++];
+    uca1_tx_buff_start %= BUFF_SIZE;
   }
 }
 
@@ -290,7 +339,7 @@ void uca1_transmit_char()
 // Function Name : receive_char
 //
 // Description: This function returns the pointer to the rx_buff and resets
-//              the rx_complete flag
+//              the rx_complete flag. FIFO buffer.
 // Arguements: void
 // Returns:    pointer to the uca0_rx_buff
 //
@@ -298,40 +347,39 @@ void uca1_transmit_char()
 // Date: March 2016
 // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (6.40.1)
 //------------------------------------------------------------------------------
-char* uca0_read_buffer(u_int8 reset)
+BufferString uca0_read_buffer(u_int8 reset)
 {
-  int i; 
-  if(uca0_rx_complete_flag)
-  {
-    if(reset) 
-    {
-      for(i = uca0_rx_buff_length; i < BUFF_SIZE; i++)
-        uca0_rx_buff[i] = NULL_TERM;
-      
-      uca0_rx_complete_flag = FALSE;
-      uca0_rx_buff_length = 0;
-    }
-    return uca0_rx_buff;
-  } 
-  return NULL;
+  // Volatile access things
+  BufferString buffer;
+  int rx_buffer_start = uca0_rx_buff_start;
+  int rx_buffer_end = uca0_rx_buff_end;
+  
+  buffer.head = uca0_rx_buff;
+  buffer.offset = rx_buffer_start;
+  if(reset) 
+  {     
+    uca0_rx_complete_flag = FALSE;
+    uca0_rx_buff_start = rx_buffer_end;
+  }
+  return buffer;
 }
 
-char* uca1_read_buffer(u_int8 reset)
+BufferString uca1_read_buffer(u_int8 reset)
 {
-  int i;  
-  if(uca1_rx_complete_flag)
-  {
-    if(reset) 
-    {
-      for(i = uca1_rx_buff_length; i < BUFF_SIZE; i++)
-        uca1_rx_buff[i] = NULL_TERM;
-      
-      uca1_rx_complete_flag = FALSE;
-      uca1_rx_buff_length = 0;
-    }
-    return uca1_rx_buff;
+   // Volatile access things
+  BufferString buffer;
+  int rx_buffer_start = uca1_rx_buff_start;
+  int rx_buffer_end = uca1_rx_buff_end;
+  
+  buffer.head = uca1_rx_buff;
+  buffer.offset = rx_buffer_start;
+  if(reset) 
+  {     
+    uca1_rx_complete_flag = FALSE;
+    uca1_rx_buff_start = rx_buffer_end;
   }  
-  return NULL;
+  
+  return buffer;
 }
 
 

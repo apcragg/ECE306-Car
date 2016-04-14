@@ -210,6 +210,7 @@ typedef unsigned char bool;
 #define NUM_BUF_SIZE            (6)
 #define DEMO_COUNT              (100)
 #define RESET_COUNT             (64535)
+#define NO_OFFSET               (0)
 
 //Timer things
 #define TA_CTL_BASE             (TA0CTL)

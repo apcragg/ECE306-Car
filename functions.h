@@ -12,6 +12,7 @@ void Init_Clocks(void);
 
 // Function prototypes systems
 void enable_interrupts(void);
+void disable_interrupts(void);
 
 // Function prototypes
 __interrupt void Timer2_B0_ISR(void);

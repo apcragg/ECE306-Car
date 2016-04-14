@@ -88,16 +88,19 @@ void main(void){
     
     update_switches();                 // Check for switch state change
     update_menu();
+
     
     if(uca0_is_message_received())
     {
-      update_menu();
-      receive_command(uca0_read_buffer(TRUE));
+      BufferString message = uca0_read_buffer(TRUE);
+      receive_command(message.head + message.offset);
     }
     
     if(uca1_is_message_received())
     {
       update_menu();
+      BufferString message = uca1_read_buffer(TRUE);
+      uca0_transmit_message(message.head, message.offset);
     }
     
     if(time_sequence > SECOND_AND_A_QUARTER)

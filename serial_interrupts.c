@@ -35,13 +35,13 @@ __interrupt void USCI_A0(void)
     default: break;
   }
 
-  UCA0IV = CLEAR_REGISTER;
+  
 }
 
 #pragma vector = USCI_A1_VECTOR
 __interrupt void USCI_A1(void)
 {   
-  switch(UCA1IV)
+  switch(__even_in_range(UCA1IV, 8))
   {  
     case 0: // Vector 0 - no interrupt
     break;
@@ -53,6 +53,4 @@ __interrupt void USCI_A1(void)
     break;
     default: break;
   }
-  
-  UCA1IV = CLEAR_REGISTER;
 }
