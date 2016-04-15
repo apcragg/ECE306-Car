@@ -164,7 +164,8 @@ typedef unsigned char bool;
 #define MENU_SERIAL             (1)
 #define MENU_LINE               (2)
 #define MENU_SHAPES             (3)
-#define NUM_MAIN_OPTIONS        (4)
+#define MENU_WIFI               (4)
+#define NUM_MAIN_OPTIONS        (5)
 
 #define BACK_OPTION             (0)
 

@@ -12,10 +12,10 @@
 
 //------------------------------------------------------------------------------
 // Local Varriables
-    static u_int8 current_menu = MENU_SERIAL;
+    static u_int8 current_menu = MENU_WIFI;
     static u_int8 menu_pressed_count = 0;
     static char buffer[11] = "0";
-    static const u_int8 num_menu_options[4] = {4, 3, 4, 5};
+    static const u_int8 num_menu_options[5] = {5, 3, 4, 5, 1};
 //------------------------------------------------------------------------------
     
 //------------------------------------------------------------------------------
@@ -47,6 +47,8 @@
     };
     static char line_buffer1[11];
     static char line_buffer2[11];
+    static char line_buffer3[11];
+    static char line_buffer4[11];
     
 //------------------------------------------------------------------------------
 
@@ -82,28 +84,10 @@ void update_menu()
     display_4 = main_menu_options[3];
     break;
     case MENU_SERIAL:
-    if(uca0_is_message_received())
-    {
-      int count = START_ZERO;
-      read_buff = uca1_read_buffer(FALSE);
-      line_buffer2[0] = NULL_TERM;
-      while((count < LCD_LENGTH*2) && read_buff.head[count] != NULL_TERM)
-      {       
-        if(count < LCD_LENGTH)
-        { 
-          line_buffer1[count] = read_buff.head[count];
-          line_buffer1[count+1] = NULL_TERM;
-        }
-        else line_buffer2[count - LCD_LENGTH] = read_buff.head[count];
-
-        count++;
-      }
-      line_buffer2[count] = NULL_TERM;
-    }
     display_1 = serial_menu_options[0];
     display_2 = serial_menu_options[1];
-    display_3 = line_buffer1;
-    display_4 = line_buffer2;
+    display_3 = " ";
+    display_4 = " ";
     break;
     case MENU_LINE:
     display_1 = line_menu_options[0];
@@ -125,6 +109,51 @@ void update_menu()
     display_2 = shape_menu_options[1];
     display_3 = shape_menu_options[2];
     display_4 = shape_menu_options[3];
+    break;
+    case MENU_WIFI:
+    if(uca1_is_message_received())
+    {
+      int count = START_ZERO;
+      read_buff = uca1_read_buffer(FALSE);
+      line_buffer2[0] = NULL_TERM;
+      line_buffer3[0] = NULL_TERM;
+      line_buffer4[0] = NULL_TERM;
+      while((count < LCD_LENGTH*4)
+           && read_buff.head[(count + read_buff.offset) % BUFF_SIZE] != NULL_TERM)
+      {       
+        if(count < LCD_LENGTH)
+        { 
+          line_buffer1[count] 
+            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
+          line_buffer1[count + 1] = NULL_TERM;
+        }
+        else if(count < LCD_LENGTH * 2)
+        {
+          line_buffer2[count - LCD_LENGTH] 
+            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
+          line_buffer2[count + 1] = NULL_TERM;
+        }
+        else if(count < LCD_LENGTH * 3 )
+        {
+          line_buffer3[count - LCD_LENGTH * 2] 
+            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
+          line_buffer3[count + 1] = NULL_TERM;
+        }
+        else if(count < LCD_LENGTH * 4)
+        {
+          line_buffer4[count - LCD_LENGTH * 3] 
+            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
+          line_buffer3[count + 1] = NULL_TERM;
+        }
+        count++;
+      }
+      
+    display_1 = line_buffer1;
+    display_2 = line_buffer2;
+    display_3 = line_buffer3;
+    display_4 = line_buffer4;
+      
+    }
     break;
     default:
       current_menu = MENU_MAIN;
@@ -225,6 +254,10 @@ void menu_handle_input(u_int8 sw_pressed)
           current_menu = MENU_MAIN;        
           menu_pressed_count = MENU_MAIN;
         }
+      break;
+      case MENU_WIFI:
+        current_menu = MENU_MAIN;        
+        menu_pressed_count = MENU_MAIN;
       break;
       default:
         current_menu = MENU_MAIN;

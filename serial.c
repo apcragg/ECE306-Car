@@ -38,8 +38,6 @@
     
     volatile static int uca0_num_buffered = 0;
     volatile static int uca1_num_buffered = 0;
-    
-    bool uca1_ready = FALSE;
 //------------------------------------------------------------------------------
     
 
@@ -215,7 +213,8 @@ void uca1_receive_char(char received_char)
 //------------------------------------------------------------------------------
 // Function Name : transmit_message
 //
-// Description: This function sets the tx buffer to a passed string
+// Description: This function sets the tx buffer to a passed string. Worst case
+//              performance of ~2k cycles to TX a full buffer.
 // Arguements: char           message
 // Returns:    void
 //
@@ -378,7 +377,6 @@ BufferString uca1_read_buffer(u_int8 reset)
     uca1_rx_complete_flag = FALSE;
     uca1_rx_buff_start = rx_buffer_end;
   }  
-  
   return buffer;
 }
 

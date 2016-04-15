@@ -26,6 +26,18 @@
 #define RESET_COMMAND              ("AT+CFUN=1\r")
 #define RESET_MESSAGE              ("IOT Device Reset")
 #define G_MAC_COMMAND              ("AT+S.GCFG=nv_wifi_macaddr\r")
+#define CONNECT_NCSU               ("~WIFI.C.NCSU")
+#define CONNECT_NCSU_MESSAGE       ("Connecting to NCSU WiFi at SSID ")
+#define SET_SSID_NCSU_COMMAND      ("AT+S.SSIDTXT=ncsu\r")
+#define GET_SSID_NCSU_COMMAND      ("AT+S.SSIDTXT\r")
+#define SET_HOST_NAME_COMMAND      ("AT+S.SCFG=ip_hostname,ECE306_01_AN\r")
+#define GET_HOST_NAME_COMMAND      ("AT+S.GCFG=ip_hostname\r")
+#define SET_PRIVACY_MODE_COMMAND   ("AT+S.SCFG=wifi_priv_mode,0\r")
+#define GET_PRIVACY_MODE_COMMAND   ("AT+S.GCFG=wifi_priv_mode\r")
+#define SET_NETWORK_MODE_COMMAND   ("AT+S.SCFG=wifi_mode,1\r")
+#define GET_NETWORK_MODE_COMMAND   ("AT+S.GCFG=wifi_mode\r")
+#define GET_WIFI_STATUS            ("~WIFI.S")
+#define GET_WIFI_STATUS_COMMAND    ("AT+S.STS\r")
 
 void receive_command(char* command)
 {
@@ -65,5 +77,45 @@ void receive_command(char* command)
   {
     uca1_set_current_baud(BAUD_115200);
     uca0_transmit_message(FAST_BAUD_MESSAGE, NO_OFFSET);
+  }
+  else if(compare(command, CONNECT_NCSU))
+  {
+    uca0_transmit_message(CONNECT_NCSU_MESSAGE, NO_OFFSET);    
+    uca1_transmit_message(SET_SSID_NCSU_COMMAND, NO_OFFSET);
+    uca1_transmit_message(GET_SSID_NCSU_COMMAND, NO_OFFSET);
+    
+    five_msec_delay(QUARTER_SECOND);
+    
+    uca1_transmit_message(SET_HOST_NAME_COMMAND, NO_OFFSET);
+    uca1_transmit_message(GET_HOST_NAME_COMMAND, NO_OFFSET);
+    
+    five_msec_delay(QUARTER_SECOND);
+    
+    uca1_transmit_message(SET_PRIVACY_MODE_COMMAND, NO_OFFSET);
+    uca1_transmit_message(GET_PRIVACY_MODE_COMMAND, NO_OFFSET);
+    
+    five_msec_delay(QUARTER_SECOND);
+    
+    uca1_transmit_message(SET_NETWORK_MODE_COMMAND, NO_OFFSET);
+    uca1_transmit_message(GET_NETWORK_MODE_COMMAND, NO_OFFSET);
+    
+    uca1_transmit_message(SAVE_COMMAND, NO_OFFSET);
+    uca1_transmit_message(GET_NETWORK_MODE_COMMAND, NO_OFFSET);
+    
+    uca1_transmit_message(SAVE_COMMAND, NO_OFFSET);
+    
+    five_msec_delay(QUARTER_SECOND);
+    
+    uca1_transmit_message(RESET_COMMAND, NO_OFFSET);
+    PJOUT &= ~IOT_RESET;
+    
+    five_msec_delay(QUARTER_SECOND);    
+    PJOUT |= IOT_RESET;  
+    
+    uca0_transmit_message(RESET_MESSAGE, NO_OFFSET);   
+  }
+  else if(compare(command, GET_WIFI_STATUS))
+  {
+    uca1_transmit_message(GET_WIFI_STATUS_COMMAND, NO_OFFSET);
   }
 }
