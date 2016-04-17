@@ -16,8 +16,13 @@
 // Function Declarations
     void Init_Conditions(void);
     void Display_Process(void);
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------   
 
+//------------------------------------------------------------------------------
+// Local Variable
+ 
+//------------------------------------------------------------------------------
+    
 //------------------------------------------------------------------------------
 // Function Name : Init_Conditions
 //
@@ -62,4 +67,34 @@ void Display_Process(void){
   lcd_out(display_2, LCD_HOME_L2, posL2);
   lcd_out(display_3, LCD_HOME_L3, posL3);
   lcd_out(display_4, LCD_HOME_L4, posL4);
+}
+
+void display_buffer_string(BufferString string)
+{
+  int count = START_ZERO;
+   
+       && string.head[(count + string.offset) % BUFF_SIZE] != NULL_TERM
+       && string.head[(count + string.offset) % BUFF_SIZE] != C_RETURN)
+  {       
+    if(count < LCD_LENGTH)
+    { 
+      line_buffer1[count] 
+        = string.head[(count + string.offset) % BUFF_SIZE];
+    }
+    {
+      line_buffer2[count - LCD_LENGTH] 
+        = string.head[(count + string.offset) % BUFF_SIZE];
+    }
+    {
+        = string.head[(count + string.offset) % BUFF_SIZE];
+    }
+    {
+        = string.head[(count + string.offset) % BUFF_SIZE];
+    }
+      count++;
+  }
+  display_1 = line_buffer1;
+  display_2 = line_buffer2;
+  display_3 = line_buffer3;
+  display_4 = line_buffer4;
 }

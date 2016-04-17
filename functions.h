@@ -1,3 +1,16 @@
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
+
+//------------------------------------------------------------------------------
+// Typedefs
+
+typedef struct string {
+  char* head;
+  int offset;
+} BufferString;
+   
+//------------------------------------------------------------------------------
+
 // Function prototypes main
 void main(void);
 void Init_Conditions(void);
@@ -40,6 +53,7 @@ void DisplayOnOff(char data);
 void lcd_BIG_mid(void);
 void lcd_4line(void);
 void lcd_out(char *s, char line, char position);
+void display_buffer_string(BufferString string);
 
 void grab_a_character(void);
 int wait_for_character(void);
@@ -56,3 +70,5 @@ void enable_switch_SW1(void);
 void enable_switch_SW2(void);
 void disable_switch_SW1(void);
 void disable_switch_SW2(void);
+
+#endif

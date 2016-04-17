@@ -15,11 +15,11 @@
     static char uca0_rx_buff[BUFF_SIZE];
     volatile  char uca0_tx_buff[BUFF_SIZE];
     
-    volatile static int uca0_rx_buff_end = 0;
-    volatile static int uca0_tx_buff_end = 0;
+    volatile static int uca0_rx_buff_end = START_ZERO;
+    volatile static int uca0_tx_buff_end = START_ZERO;
     
-    volatile static int uca0_tx_buff_start= 0;
-    volatile static int uca0_rx_buff_start = 0;
+    volatile static int uca0_tx_buff_start= START_ZERO;
+    volatile static int uca0_rx_buff_start = START_ZERO;
     
     volatile static int uca0_rx_complete_flag = FALSE;
     volatile static int uca0_tx_complete_flag = TRUE;
@@ -27,17 +27,17 @@
     static char uca1_rx_buff[BUFF_SIZE];
     volatile static char uca1_tx_buff[BUFF_SIZE];
     
-    volatile static int uca1_rx_buff_end = 0;
-    volatile static int uca1_tx_buff_end = 0;
+    volatile static int uca1_rx_buff_end = START_ZERO;
+    volatile static int uca1_tx_buff_end = START_ZERO;
     
-    volatile static int uca1_tx_buff_start = 0;
-    volatile static int uca1_rx_buff_start = 0;
+    volatile static int uca1_tx_buff_start = START_ZERO;
+    volatile static int uca1_rx_buff_start = START_ZERO;
     
     volatile static int uca1_rx_complete_flag = FALSE;
     volatile static int uca1_tx_complete_flag = TRUE;
     
-    volatile static int uca0_num_buffered = 0;
-    volatile static int uca1_num_buffered = 0;
+    volatile static int uca0_num_buffered = START_ZERO;
+    volatile static int uca1_num_buffered = START_ZERO;
 //------------------------------------------------------------------------------
     
 
@@ -61,7 +61,7 @@ void init_serial_uart()
   five_msec_delay(QUARTER_SECOND);
   
   // Configure UART 0
-  UCA0CTLW0 = 0; // Use word register
+  UCA0CTLW0 = CLEAR_REGISTER; // Use word register
   UCA0CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
   UCA0CTLW0 |= UCSWRST; // Set Software reset enable
  
@@ -74,7 +74,7 @@ void init_serial_uart()
   UCA0IE |= UCTXIE; // Enable TX interrupt
 
   // Configure UART 1
-  UCA1CTLW0 = 0; // Use word register
+  UCA1CTLW0 = CLEAR_REGISTER; // Use word register
   UCA1CTLW0 |= UCSSEL__SMCLK; // Set SMCLK as fBRCLK
   UCA1CTLW0 |= UCSWRST; // Set Software reset enable
  
@@ -122,8 +122,8 @@ void uca0_set_current_baud(u_int8 set_baud_rate)
   if(current_baud == BAUD_9600)
   {
     UCA0CTLW0 |= UCSWRST; // Set Software reset enable
-    UCA0BRW = 52; // 9,600 Baud
-    UCA0MCTLW = 0x4911;
+    UCA0BRW = BRW_9600; // 9,600 Baud
+    UCA0MCTLW = MCTL_9600;
     UCA0CTL1 &= ~UCSWRST; // Release from reset
     UCA0IFG &= ~UCTXIFG;
     UCA0IE |= UCRXIE; // Enable RX interrupt
@@ -132,8 +132,8 @@ void uca0_set_current_baud(u_int8 set_baud_rate)
   else if(current_baud == BAUD_115200)
   {
     UCA0CTLW0 |= UCSWRST; // Set Software reset enable
-    UCA0BRW = 4; // 115,200 Baud
-    UCA0MCTLW = 0x5551 ;
+    UCA0BRW = BRW_115200; // 115,200 Baud
+    UCA0MCTLW = MCTL_115200 ;
     UCA0CTL1 &= ~UCSWRST; // Release from reset
     UCA0IFG &= ~UCTXIFG;
     UCA0IE |= UCRXIE; // Enable RX interrupt
@@ -148,8 +148,8 @@ void uca1_set_current_baud(u_int8 set_baud_rate)
   if(current_baud == BAUD_9600)
   {
     UCA1CTLW0 |= UCSWRST; // Set Software reset enable
-    UCA1BRW = 52; // 9,600 Baud
-    UCA1MCTLW = 0x4911;
+    UCA1BRW = BRW_9600; // 9,600 Baud
+    UCA1MCTLW = MCTL_9600;
     UCA1CTL1 &= ~UCSWRST; // Release from reset
     UCA1IFG &= ~UCTXIFG;
     UCA1IE |= UCRXIE; // Enable RX interrupt
@@ -158,8 +158,8 @@ void uca1_set_current_baud(u_int8 set_baud_rate)
   else if(current_baud == BAUD_115200)
   {
     UCA1CTLW0 |= UCSWRST; // Set Software reset enable
-    UCA1BRW = 4; // 115,200 Baud
-    UCA1MCTLW = 0x5551 ;
+    UCA1BRW = BRW_115200; // 115,200 Baud
+    UCA1MCTLW = MCTL_115200 ;
     UCA1CTL1 &= ~UCSWRST; // Release from reset
     UCA1IFG &= ~UCTXIFG;
     UCA1IE |= UCRXIE; // Enable RX interrupt

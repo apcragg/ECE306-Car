@@ -21,3 +21,15 @@ bool compare(char* a, char* b)
   
   return FALSE;
 }
+
+bool find(char* a, char* b)
+{
+  int i = START_VAL;
+  while(a[i] == b[i])
+  {
+    if(a[++i] == NULL_TERM || a[i] == C_RETURN)
+      return TRUE;
+  }
+  
+  return FALSE;
+}

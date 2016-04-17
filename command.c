@@ -13,32 +13,6 @@
 // Module Scope Globals
 //------------------------------------------------------------------------------
 
-
-// Temp Defines
-#define COMMAND_AKNOWLEDGE         ("~~")
-#define AKNOWLEDGE_MESSAGE         ("Good News Everyone!\n\r")
-#define SLOW_BAUD                  ("~S")
-#define SLOW_BAUD_MESSAGE          ("Set 9600B\n\r")
-#define SLOW_BAUD_COMMAND          ("AT+S.SCFG=console1_speed,9600\r")
-#define FAST_BAUD                  ("~F")
-#define FAST_BAUD_MESSAGE          ("Set 115200B\n\r")
-#define SAVE_COMMAND               ("AT&W\r")
-#define RESET_COMMAND              ("AT+CFUN=1\r")
-#define RESET_MESSAGE              ("IOT Device Reset")
-#define G_MAC_COMMAND              ("AT+S.GCFG=nv_wifi_macaddr\r")
-#define CONNECT_NCSU               ("~WIFI.C.NCSU")
-#define CONNECT_NCSU_MESSAGE       ("Connecting to NCSU WiFi at SSID ")
-#define SET_SSID_NCSU_COMMAND      ("AT+S.SSIDTXT=ncsu\r")
-#define GET_SSID_NCSU_COMMAND      ("AT+S.SSIDTXT\r")
-#define SET_HOST_NAME_COMMAND      ("AT+S.SCFG=ip_hostname,ECE306_01_AN\r")
-#define GET_HOST_NAME_COMMAND      ("AT+S.GCFG=ip_hostname\r")
-#define SET_PRIVACY_MODE_COMMAND   ("AT+S.SCFG=wifi_priv_mode,0\r")
-#define GET_PRIVACY_MODE_COMMAND   ("AT+S.GCFG=wifi_priv_mode\r")
-#define SET_NETWORK_MODE_COMMAND   ("AT+S.SCFG=wifi_mode,1\r")
-#define GET_NETWORK_MODE_COMMAND   ("AT+S.GCFG=wifi_mode\r")
-#define GET_WIFI_STATUS            ("~WIFI.S")
-#define GET_WIFI_STATUS_COMMAND    ("AT+S.STS\r")
-
 void receive_command(char* command)
 {
   if(compare(command, COMMAND_AKNOWLEDGE))
@@ -75,8 +49,27 @@ void receive_command(char* command)
   }
   else if(compare(command, FAST_BAUD))
   {
+     uca1_set_current_baud(BAUD_9600);
+    
+    uca0_transmit_message(FAST_BAUD_MESSAGE, NO_OFFSET);  
+    uca1_transmit_message(FAST_BAUD_COMMAND, NO_OFFSET);  
+    
+    five_msec_delay(SECOND + SECOND);
+    
+    uca1_transmit_message(SAVE_COMMAND, NO_OFFSET); 
+    
+    
+    five_msec_delay(SECOND);
     uca1_set_current_baud(BAUD_115200);
-    uca0_transmit_message(FAST_BAUD_MESSAGE, NO_OFFSET);
+    
+    uca1_transmit_message(RESET_COMMAND, NO_OFFSET);
+    PJOUT &= ~IOT_RESET;
+    
+    five_msec_delay(QUARTER_SECOND);
+    
+    PJOUT |= IOT_RESET;  
+    
+    uca0_transmit_message(RESET_MESSAGE, NO_OFFSET);
   }
   else if(compare(command, CONNECT_NCSU))
   {
@@ -117,5 +110,118 @@ void receive_command(char* command)
   else if(compare(command, GET_WIFI_STATUS))
   {
     uca1_transmit_message(GET_WIFI_STATUS_COMMAND, NO_OFFSET);
+  }
+  else if(compare(command, GET_WIFI_IP))
+  {
+    uca1_transmit_message(GET_WIFI_IP_COMMAND, NO_OFFSET);
+  }
+  // Forward Command
+  else if(find(CAR_FORWARD, command))
+  {
+    display_1 = CLEAR_LINE;
+    display_2 = command;
+    display_3 = CLEAR_LINE;
+    display_4 = CLEAR_LINE;
+    
+    lcd_BIG_mid();
+    five_msec_delay(QUARTER_SECOND);
+    Display_Process();
+    
+    uca0_transmit_message("SUCCESS", NO_OFFSET);    
+     
+    turn_on_motor(R_FORWARD);
+    five_msec_delay(TURN_ON_COMP);
+    turn_on_motor(L_FORWARD);
+    
+    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]));
+    
+    turn_off_motor(R_FORWARD);
+    turn_off_motor(L_FORWARD);
+    
+     lcd_4line();
+     
+     if(command[COMMAND_LENGTH] == COMMAND_CHAR_SYMBOL)
+       receive_command(command + COMMAND_LENGTH);
+  }
+  // Backward Command
+   else if(find(CAR_BACKWARD, command))
+  {
+    display_1 = CLEAR_LINE;
+    display_2 = command;
+    display_3 = CLEAR_LINE;
+    display_4 = CLEAR_LINE;
+    
+    lcd_BIG_mid();
+    five_msec_delay(QUARTER_SECOND);
+    Display_Process();
+    
+     uca0_transmit_message("SUCCESS", NO_OFFSET);    
+     
+    turn_on_motor(R_REVERSE);
+    turn_on_motor(L_REVERSE);
+    
+    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]));
+    
+    turn_off_motor(R_REVERSE);
+    turn_off_motor(L_REVERSE);
+    
+     lcd_4line();
+     
+     if(command[COMMAND_LENGTH] == COMMAND_CHAR_SYMBOL)
+       receive_command(command + COMMAND_LENGTH);
+  }
+  // Right Command
+   else if(find(CAR_RIGHT, command))
+  {
+    display_1 = CLEAR_LINE;
+    display_2 = command;
+    display_3 = CLEAR_LINE;
+    display_4 = CLEAR_LINE;
+    
+    lcd_BIG_mid();
+    five_msec_delay(QUARTER_SECOND);
+    Display_Process();
+    
+     uca0_transmit_message("SUCCESS", NO_OFFSET);    
+     
+    turn_on_motor(R_REVERSE);
+    turn_on_motor(L_FORWARD);
+    
+    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
+    
+    turn_off_motor(R_REVERSE);
+    turn_off_motor(L_FORWARD);
+    
+     lcd_4line();
+     
+     if(command[COMMAND_LENGTH] == COMMAND_CHAR_SYMBOL)
+       receive_command(command + COMMAND_LENGTH);
+  }
+  // Left Command
+   else if(find(CAR_LEFT, command))
+  {
+    display_1 = CLEAR_LINE;
+    display_2 = command;
+    display_3 = CLEAR_LINE;
+    display_4 = CLEAR_LINE;
+    
+    lcd_BIG_mid();
+    five_msec_delay(QUARTER_SECOND);
+    Display_Process();
+    
+     uca0_transmit_message("SUCCESS", NO_OFFSET);    
+     
+    turn_on_motor(R_FORWARD);
+    turn_on_motor(L_REVERSE);
+    
+    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
+    
+    turn_off_motor(R_FORWARD);
+    turn_off_motor(L_REVERSE);
+    
+     lcd_4line();
+     
+     if(command[COMMAND_LENGTH] == COMMAND_CHAR_SYMBOL)
+       receive_command(command + COMMAND_LENGTH);
   }
 }

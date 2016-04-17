@@ -8,6 +8,9 @@
 #include "line.h"
 #include "adc.h"
 #include "serial.h"
+#include "functions.h"
+#include "string.h"
+#include "command.h"
 
 //------------------------------------------------------------------------------
 // Function Declarations

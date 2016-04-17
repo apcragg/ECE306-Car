@@ -30,11 +30,15 @@ typedef unsigned char bool;
 #define PI                      (3.1415) // PI
 #define INVALID                 (-1)
 #define NIBBLE                  (0xF)
+#define NIBBLE_SIZE             (4)
+#define BYTE_SIZE               (4)
 #define INCREMENT               (1)
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
 #define NULL                    (0)
 #define OFF_BY_ONE              (1)
 #define START_ZERO              (0)
+#define DIVIDE_BY_TWO           (2)
+#define DOUBLE                  (2)
 
 #define TENS                    (10)
 #define HUNDREDS                (100)
@@ -44,6 +48,7 @@ typedef unsigned char bool;
 // Helper macros
 #define DIG_TO_CH(D)            ((D)+0x30) // Converts a digit to an ASCII char
 #define HEX_TO_CH(H)            ((H) > 9 ? ((H) % 10) + 'A' : (H) + '0')
+#define CH_TO_DIG(C)            ((C) - 0x30)
 
 // LCD
 #define LCD_HOME_L1	        (0x80)
@@ -76,6 +81,16 @@ typedef unsigned char bool;
 #define DISPLAY_LINE_2          (2)
 #define DISPLAY_LINE_3          (3)
 #define DISPLAY_LINE_4          (4)
+
+// Array Position
+#define ARR_POS_0               (0)
+#define ARR_POS_1               (1)
+#define ARR_POS_2               (2)
+#define ARR_POS_3               (3)
+#define ARR_POS_4               (4)
+#define ARR_POS_5               (5)
+#define ARR_POS_6               (6)
+#define ARR_POS_7               (7)
 
 //------------------------------------------------------------------------------
 // Port Macros
@@ -133,6 +148,7 @@ typedef unsigned char bool;
 // Other macros
 //------------------------------------------------------------------------------
 
+
 //pwm things
 #define NUM_A_TIMERS            (7)    // Number of timer registers on Timer A
 #define TIMER_A0                (0x00) // Timer A0
@@ -145,11 +161,11 @@ typedef unsigned char bool;
 #define PWM_RES                 (4096) // PWM resolution
 
 // Motor constants
-#define MOTOR_ADJ_FAC           (.955f) // Left motor compensation
+#define MOTOR_ADJ_FAC           (.85f) // Left motor compensation
 #define MAX_SPEED               (PWM_RES)
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 #define ACTIVE_BREAK            (12)
-#define TURN_ON_COMP            (35)
+#define TURN_ON_COMP            (85)
 
 // ADC things
 #define ADC0                    (0)      // ADC0 Pin
@@ -166,12 +182,14 @@ typedef unsigned char bool;
 #define MENU_SHAPES             (3)
 #define MENU_WIFI               (4)
 #define NUM_MAIN_OPTIONS        (5)
+#define NUM_LCD_LINES           (4)
 
 #define BACK_OPTION             (0)
 
 #define BLACK_VAL               (1)
 #define WHITE_VAL               (2)
 #define RUN_BASIC_OPTION        (3)
+#define CLEAR_LINE              ("          ")
 
 // Serial things
 #define BAUD_9600               (1)
@@ -181,6 +199,10 @@ typedef unsigned char bool;
 #define BAUD_9600_VAL           (9600)
 #define BAUD_115600_VAL         (115600)
 #define C_RETURN                ('\r')
+#define NO_INTERRUPT            (0)
+#define RXIFG                   (2)
+#define TXIFG                   (4)
+#define IP_STATUS_OFFSET        (5)
   
 // Line things
 #define RIGHT_DETECT            (0)
@@ -212,6 +234,11 @@ typedef unsigned char bool;
 #define DEMO_COUNT              (100)
 #define RESET_COUNT             (64535)
 #define NO_OFFSET               (0)
+
+#define BRW_115200              (4)
+#define BRW_9600                (5)
+#define MCTL_115200             (0x5551)
+#define MCTL_9600               (0x4911)
 
 //Timer things
 #define TA_CTL_BASE             (TA0CTL)

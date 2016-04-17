@@ -24,12 +24,12 @@ __interrupt void USCI_A0(void)
 {
   switch(UCA0IV)
   {  
-    case 0: // Vector 0 - no interrupt
+    case NO_INTERRUPT: // Vector 0 - no interrupt
     break;
-    case 2: // Vector 2 - RXIFG
+    case RXIFG: // Vector 2 - RXIFG
       uca0_receive_char(UCA0RXBUF);
     break;
-    case 4: // Vector 4 – TXIFG
+    case TXIFG: // Vector 4 – TXIFG
       uca0_transmit_char();
     break;
     default: break;
@@ -41,14 +41,14 @@ __interrupt void USCI_A0(void)
 #pragma vector = USCI_A1_VECTOR
 __interrupt void USCI_A1(void)
 {   
-  switch(__even_in_range(UCA1IV, 8))
+  switch(UCA0IV)
   {  
-    case 0: // Vector 0 - no interrupt
+    case NO_INTERRUPT: // Vector 0 - no interrupt
     break;
-    case 2: // Vector 2 - RXIFG
+    case RXIFG: // Vector 2 - RXIFG
       uca1_receive_char(UCA1RXBUF);
     break;
-    case 4: // Vector 4 – TXIFG
+    case TXIFG: // Vector 4 – TXIFG
       uca1_transmit_char();
     break;
     default: break;

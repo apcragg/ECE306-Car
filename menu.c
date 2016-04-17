@@ -13,43 +13,50 @@
 //------------------------------------------------------------------------------
 // Local Varriables
     static u_int8 current_menu = MENU_WIFI;
-    static u_int8 menu_pressed_count = 0;
-    static char buffer[11] = "0";
-    static const u_int8 num_menu_options[5] = {5, 3, 4, 5, 1};
+    static u_int8 menu_pressed_count = START_ZERO;
+    static char buffer[DISPLAY_LENGTH] = "0";
+    static const u_int8 num_menu_options[NUM_MAIN_OPTIONS] = {5, 3, 4, 5, 1};
+    static long int current_time = START_ZERO;
 //------------------------------------------------------------------------------
+ 
+//------------------------------------------------------------------------------
+// Global Varriables
+    char line_buffer1[DISPLAY_LENGTH];
+    char line_buffer2[DISPLAY_LENGTH];
+    char line_buffer3[DISPLAY_LENGTH];
+    char line_buffer4[DISPLAY_LENGTH];
+ //------------------------------------------------------------------------------
     
 //------------------------------------------------------------------------------
 // Static Const Data
-    static char* const main_menu_options[4] = 
+    static char* const main_menu_options[NUM_LCD_LINES] = 
     {
       "1 Serial",
       "2 Line",
       "3 Shapes",
       " "
     };
-    static char* const serial_menu_options[2] = 
+    static char* const serial_menu_options[NUM_LCD_LINES] = 
     {
       "Set 9600",
       "Set 115200",
+      " ",
+      " "
     };
-    static char* const line_menu_options[3] = 
+    static char* const line_menu_options[NUM_LCD_LINES] = 
     {
       "1 Blk Cal",
       "2 Wht Cal",
-      "3 Basic"
+      "3 Basic",
+      " "
     };
-    static char* const shape_menu_options[4] = 
+    static char* const shape_menu_options[NUM_LCD_LINES] = 
     {
       "1 TODO",
       "2 TODO",
       "3 TODO",
       "4 TODO"
-    };
-    static char line_buffer1[11];
-    static char line_buffer2[11];
-    static char line_buffer3[11];
-    static char line_buffer4[11];
-    
+    };    
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -67,8 +74,7 @@
 void update_menu()
 {
   int adc_val;
-  BufferString read_buff;
-
+  
   posL1 = DISPLAY_LINE_0;
   posL2 = DISPLAY_LINE_0;
   posL3 = DISPLAY_LINE_0;
@@ -78,81 +84,77 @@ void update_menu()
   switch(current_menu)
   {    
     case MENU_MAIN:      
-    display_1 = main_menu_options[0];
-    display_2 = main_menu_options[1];
-    display_3 = main_menu_options[2];
-    display_4 = main_menu_options[3];
+    display_1 = main_menu_options[ARR_POS_0];
+    display_2 = main_menu_options[ARR_POS_1];
+    display_3 = main_menu_options[ARR_POS_2];
+    display_4 = main_menu_options[ARR_POS_3];
     break;
     case MENU_SERIAL:
-    display_1 = serial_menu_options[0];
-    display_2 = serial_menu_options[1];
+    display_1 = serial_menu_options[ARR_POS_0];
+    display_2 = serial_menu_options[ARR_POS_1];
     display_3 = " ";
     display_4 = " ";
     break;
     case MENU_LINE:
-    display_1 = line_menu_options[0];
-    display_2 = line_menu_options[1];
-    display_3 = line_menu_options[2];
+    display_1 = line_menu_options[ARR_POS_0];
+    display_2 = line_menu_options[ARR_POS_1];
+    display_3 = line_menu_options[ARR_POS_2];
     display_4 = buffer; 
        
-    adc_val = (analog_read(ADC0) + analog_read(ADC1)) / 2;
+    adc_val = (analog_read(ADC0) + analog_read(ADC1)) / DIVIDE_BY_TWO;
   
-    buffer[1] = '0';
-    buffer[2] = 'x';
-    buffer[3] = HEX_TO_CH((adc_val >> 8) & NIBBLE);
-    buffer[4] = HEX_TO_CH((adc_val >> 4) & NIBBLE);
-    buffer[5] = HEX_TO_CH((adc_val >> 0) & NIBBLE);
-    buffer[6] = NULL_TERM;
+    buffer[ARR_POS_1] = '0';
+    buffer[ARR_POS_2] = 'x';
+    buffer[ARR_POS_3] = HEX_TO_CH((adc_val >> BYTE_SIZE  ) & NIBBLE);
+    buffer[ARR_POS_4] = HEX_TO_CH((adc_val >> NIBBLE_SIZE) & NIBBLE);
+    buffer[ARR_POS_5] = HEX_TO_CH((adc_val)                & NIBBLE);
+    buffer[ARR_POS_6] = NULL_TERM;
     break;
     case MENU_SHAPES:
-    display_1 = shape_menu_options[0];
-    display_2 = shape_menu_options[1];
-    display_3 = shape_menu_options[2];
-    display_4 = shape_menu_options[3];
+    display_1 = shape_menu_options[ARR_POS_0];
+    display_2 = shape_menu_options[ARR_POS_1];
+    display_3 = shape_menu_options[ARR_POS_2];
+    display_4 = shape_menu_options[ARR_POS_3];
     break;
     case MENU_WIFI:
-    if(uca1_is_message_received())
+    if(system_time > current_time + SECOND * DOUBLE)
     {
-      int count = START_ZERO;
-      read_buff = uca1_read_buffer(FALSE);
-      line_buffer2[0] = NULL_TERM;
-      line_buffer3[0] = NULL_TERM;
-      line_buffer4[0] = NULL_TERM;
-      while((count < LCD_LENGTH*4)
-           && read_buff.head[(count + read_buff.offset) % BUFF_SIZE] != NULL_TERM)
-      {       
-        if(count < LCD_LENGTH)
-        { 
-          line_buffer1[count] 
-            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
-          line_buffer1[count + 1] = NULL_TERM;
-        }
-        else if(count < LCD_LENGTH * 2)
-        {
-          line_buffer2[count - LCD_LENGTH] 
-            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
-          line_buffer2[count + 1] = NULL_TERM;
-        }
-        else if(count < LCD_LENGTH * 3 )
-        {
-          line_buffer3[count - LCD_LENGTH * 2] 
-            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
-          line_buffer3[count + 1] = NULL_TERM;
-        }
-        else if(count < LCD_LENGTH * 4)
-        {
-          line_buffer4[count - LCD_LENGTH * 3] 
-            = read_buff.head[(count + read_buff.offset) % BUFF_SIZE];
-          line_buffer3[count + 1] = NULL_TERM;
-        }
-        count++;
+      int i;
+      uca1_transmit_message(GET_WIFI_IP_COMMAND, NO_OFFSET);
+      five_msec_delay(QUARTER_SECOND / DIVIDE_BY_TWO); 
+      BufferString a = uca1_read_buffer(FALSE);
+      a.offset += IP_STATUS_OFFSET;
+      
+      display_1 = CLEAR_LINE;
+      display_2 = " ip_addr";
+      
+      for(i = START_ZERO; i <= DISPLAY_LENGTH; i++)
+      {
+        line_buffer3[i] = ' ';
+        line_buffer4[i] = ' ';
+      }
+      for(i = START_ZERO; i < ARR_POS_7; i++)
+      {
+        line_buffer3[ARR_POS_1 + i] = a.head[(a.offset + i) % BUFF_SIZE];
+      }
+      for(i = START_ZERO; i < ARR_POS_7; i++)
+      {
+        line_buffer4[ARR_POS_2 + i] = a.head[(a.offset + i + ARR_POS_7) % BUFF_SIZE];
       }
       
-    display_1 = line_buffer1;
-    display_2 = line_buffer2;
-    display_3 = line_buffer3;
-    display_4 = line_buffer4;
+      display_3 = line_buffer3;
+      display_4 = line_buffer4;
       
+      current_time = system_time;
+      /*int count = START_ZERO; 
+      BufferString read_buff = uca1_read_buffer(FALSE);
+      while(read_buff.head[(read_buff.offset + count) % BUFF_SIZE] != '\0')
+      {
+        if(find("ipaddr", 
+                read_buff.head + ((read_buff.offset + count) % BUFF_SIZE)))
+          display_1 = "FOUND IT!";
+      }
+      */
     }
     break;
     default:
@@ -265,4 +267,3 @@ void menu_handle_input(u_int8 sw_pressed)
     }
   }
 }
-

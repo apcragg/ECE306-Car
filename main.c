@@ -24,10 +24,10 @@
 
 // Global Variables
 volatile unsigned char control_state[CNTL_STATE_INDEX];
-extern char display_line_1[11];
-extern char display_line_2[11];
-extern char display_line_3[11];
-extern char display_line_4[11];
+extern char display_line_1[DISPLAY_LENGTH];
+extern char display_line_2[DISPLAY_LENGTH];
+extern char display_line_3[DISPLAY_LENGTH];
+extern char display_line_4[DISPLAY_LENGTH];
 extern char *display_1;
 extern char *display_2;
 extern char *display_3;
@@ -101,6 +101,10 @@ void main(void){
       update_menu();
       BufferString message = uca1_read_buffer(TRUE);
       uca0_transmit_message(message.head, message.offset);
+      if(find(WIFI_COMMAND_SYMBOL, message.head + message.offset))
+      {
+        receive_command(message.head + message.offset);
+      }
     }
     
     if(time_sequence > SECOND_AND_A_QUARTER)
@@ -123,7 +127,7 @@ void setup_pwm()
     init_pwm(&TB1CTL);
   
     set_pwm_resolution(&TB1CCR0, PWM_RES);
-    set_pwm_value(&TB1CCR1, PWM_RES / 2);
+    set_pwm_value(&TB1CCR1, PWM_RES / DIVIDE_BY_TWO);
     set_pwm_output(&TB1CCTL1);
     
     P3DIR |= R_FORWARD;
@@ -136,7 +140,7 @@ void setup_pwm()
     init_pwm(&TB2CTL);
   
     set_pwm_resolution(&TB2CCR0, PWM_RES);
-    set_pwm_value(&TB2CCR1, PWM_RES / 2);
+    set_pwm_value(&TB2CCR1, PWM_RES / DIVIDE_BY_TWO);
     set_pwm_output(&TB2CCTL1);
     
     P3DIR |= L_FORWARD;
@@ -146,7 +150,7 @@ void setup_pwm()
     start_pwm(&TB2CTL);
     
     // R_REVERSE on P3.5  
-    set_pwm_value(&TB1CCR2, PWM_RES / 2);
+    set_pwm_value(&TB1CCR2, PWM_RES / DIVIDE_BY_TWO);
     set_pwm_output(&TB1CCTL2);
     
     P3DIR |= R_REVERSE;
@@ -154,7 +158,7 @@ void setup_pwm()
     P3SEL1 &= ~R_REVERSE;   
     
     // L_REVERSE on P3.7 
-    set_pwm_value(&TB2CCR2, PWM_RES / 2);
+    set_pwm_value(&TB2CCR2, PWM_RES / DIVIDE_BY_TWO);
     set_pwm_output(&TB2CCTL2);
     
     P3DIR |= L_REVERSE;

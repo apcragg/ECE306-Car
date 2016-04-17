@@ -120,14 +120,14 @@ void set_motor_speed(u_int8 motor, int motor_speed)
 {
   switch(motor)
   {                  // compensates for slow motor I have
-    case R_FORWARD: 
-      set_pwm_value(&TB1CCR1, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
     case L_FORWARD: 
-      set_pwm_value(&TB2CCR1, PWM_RES - motor_speed); break;
-     case R_REVERSE: 
-      set_pwm_value(&TB1CCR2, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
-    case L_REVERSE: 
-      set_pwm_value(&TB2CCR2, PWM_RES - motor_speed); break;
+      set_pwm_value(&TB2CCR1, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
+    case R_FORWARD: 
+      set_pwm_value(&TB1CCR1, PWM_RES - motor_speed); break;
+     case L_REVERSE: 
+      set_pwm_value(&TB2CCR2, (int) (PWM_RES - (motor_speed * MOTOR_ADJ_FAC))); break;
+    case R_REVERSE: 
+      set_pwm_value(&TB1CCR2, PWM_RES - motor_speed); break;
   }
 }
 
