@@ -72,7 +72,11 @@ void Display_Process(void){
 void display_buffer_string(BufferString string)
 {
   int count = START_ZERO;
+  line_buffer2[START_ZERO] = NULL_TERM;
+  line_buffer3[START_ZERO] = NULL_TERM;
+  line_buffer4[START_ZERO] = NULL_TERM;
    
+  while((count < LCD_LENGTH * DISPLAY_LINE_4)
        && string.head[(count + string.offset) % BUFF_SIZE] != NULL_TERM
        && string.head[(count + string.offset) % BUFF_SIZE] != C_RETURN)
   {       
@@ -80,16 +84,25 @@ void display_buffer_string(BufferString string)
     { 
       line_buffer1[count] 
         = string.head[(count + string.offset) % BUFF_SIZE];
+      line_buffer1[count + INCREMENT] = NULL_TERM;
     }
+    else if(count < LCD_LENGTH * DISPLAY_LINE_2)
     {
       line_buffer2[count - LCD_LENGTH] 
         = string.head[(count + string.offset) % BUFF_SIZE];
+      line_buffer2[count + INCREMENT] = NULL_TERM;
     }
+    else if(count < LCD_LENGTH * DISPLAY_LINE_3)
     {
+      line_buffer3[count - LCD_LENGTH * DISPLAY_LINE_2] 
         = string.head[(count + string.offset) % BUFF_SIZE];
+      line_buffer3[count + INCREMENT] = NULL_TERM;
     }
+    else if(count < LCD_LENGTH * DISPLAY_LINE_4)
     {
+      line_buffer4[count - LCD_LENGTH * DISPLAY_LINE_3] 
         = string.head[(count + string.offset) % BUFF_SIZE];
+      line_buffer3[count + INCREMENT] = NULL_TERM;
     }
       count++;
   }

@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 // Function Declarations
     bool compare(char*, char*);
-    bool find(char*, char*);
+    bool find(char*, BufferString);
 //------------------------------------------------------------------------------
 
 #endif

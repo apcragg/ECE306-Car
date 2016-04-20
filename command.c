@@ -15,6 +15,10 @@
 
 void receive_command(char* command)
 {
+  BufferString temp_command;
+  temp_command.head = command;
+  temp_command.offset = START_ZERO;
+  
   if(compare(command, COMMAND_AKNOWLEDGE))
   {
     uca0_transmit_message(AKNOWLEDGE_MESSAGE, NO_OFFSET);
@@ -116,7 +120,7 @@ void receive_command(char* command)
     uca1_transmit_message(GET_WIFI_IP_COMMAND, NO_OFFSET);
   }
   // Forward Command
-  else if(find(CAR_FORWARD, command))
+  else if(find(CAR_FORWARD, temp_command))
   {
     display_1 = CLEAR_LINE;
     display_2 = command;
@@ -144,7 +148,7 @@ void receive_command(char* command)
        receive_command(command + COMMAND_LENGTH);
   }
   // Backward Command
-   else if(find(CAR_BACKWARD, command))
+   else if(find(CAR_BACKWARD, temp_command))
   {
     display_1 = CLEAR_LINE;
     display_2 = command;
@@ -171,7 +175,7 @@ void receive_command(char* command)
        receive_command(command + COMMAND_LENGTH);
   }
   // Right Command
-   else if(find(CAR_RIGHT, command))
+   else if(find(CAR_RIGHT, temp_command))
   {
     display_1 = CLEAR_LINE;
     display_2 = command;
@@ -198,7 +202,7 @@ void receive_command(char* command)
        receive_command(command + COMMAND_LENGTH);
   }
   // Left Command
-   else if(find(CAR_LEFT, command))
+   else if(find(CAR_LEFT, temp_command))
   {
     display_1 = CLEAR_LINE;
     display_2 = command;

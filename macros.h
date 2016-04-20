@@ -165,7 +165,7 @@ typedef unsigned char bool;
 #define MAX_SPEED               (PWM_RES)
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 #define ACTIVE_BREAK            (12)
-#define TURN_ON_COMP            (85)
+#define TURN_ON_COMP            (25)
 
 // ADC things
 #define ADC0                    (0)      // ADC0 Pin
@@ -202,7 +202,7 @@ typedef unsigned char bool;
 #define NO_INTERRUPT            (0)
 #define RXIFG                   (2)
 #define TXIFG                   (4)
-#define IP_STATUS_OFFSET        (5)
+#define IP_STATUS_OFFSET        (15)
   
 // Line things
 #define RIGHT_DETECT            (0)

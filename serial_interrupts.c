@@ -32,16 +32,15 @@ __interrupt void USCI_A0(void)
     case TXIFG: // Vector 4 – TXIFG
       uca0_transmit_char();
     break;
-    default: break;
-  }
-
-  
+    default: 
+    break;
+  } 
 }
 
 #pragma vector = USCI_A1_VECTOR
 __interrupt void USCI_A1(void)
 {   
-  switch(UCA0IV)
+  switch(UCA1IV)
   {  
     case NO_INTERRUPT: // Vector 0 - no interrupt
     break;
@@ -51,6 +50,7 @@ __interrupt void USCI_A1(void)
     case TXIFG: // Vector 4 – TXIFG
       uca1_transmit_char();
     break;
-    default: break;
+    default: 
+    break;
   }
 }

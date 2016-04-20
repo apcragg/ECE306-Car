@@ -101,9 +101,13 @@ void main(void){
       update_menu();
       BufferString message = uca1_read_buffer(TRUE);
       uca0_transmit_message(message.head, message.offset);
-      if(find(WIFI_COMMAND_SYMBOL, message.head + message.offset))
+      if(find(WIFI_COMMAND_SYMBOL, message))
       {
         receive_command(message.head + message.offset);
+      }
+      if(find(LOST_WIFI_COMMAND_SYMBOL, message))
+      {
+        receive_command(CONNECT_NCSU);
       }
     }
     

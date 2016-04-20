@@ -38,6 +38,8 @@
     
     volatile static int uca0_num_buffered = START_ZERO;
     volatile static int uca1_num_buffered = START_ZERO;
+    
+    volatile static int has_com_sent = FALSE;
 //------------------------------------------------------------------------------
     
 
@@ -180,6 +182,8 @@ void uca1_set_current_baud(u_int8 set_baud_rate)
 //------------------------------------------------------------------------------
 void uca0_receive_char(char received_char)
 {
+  if(!has_com_sent) has_com_sent = TRUE;
+  
   if(received_char == NULL_TERM || received_char == C_RETURN)
   {
     uca0_rx_buff[uca0_rx_buff_end++] = NULL_TERM;
@@ -227,7 +231,7 @@ void uca0_transmit_message(char* message, int offset)
   int count = START_ZERO;
   bool end = FALSE;
   
-  while(!end) 
+  while(!end && has_com_sent) 
   {
     uca0_tx_buff[(count + uca0_tx_buff_end) % BUFF_SIZE] 
       = message[(offset + count) % BUFF_SIZE];

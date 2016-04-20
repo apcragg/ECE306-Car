@@ -34,7 +34,7 @@
       "1 Serial",
       "2 Line",
       "3 Shapes",
-      " "
+      "4 Wifi"
     };
     static char* const serial_menu_options[NUM_LCD_LINES] = 
     {
@@ -211,6 +211,10 @@ void menu_handle_input(u_int8 sw_pressed)
         else if(menu_pressed_count == MENU_SHAPES)
         {
           current_menu = MENU_SHAPES;
+        }
+        else if(menu_pressed_count == MENU_WIFI)
+        {
+          current_menu = MENU_WIFI;
         }
         menu_pressed_count = MENU_MAIN;
       break;

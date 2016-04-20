@@ -20,7 +20,8 @@
 #define COMMAND_CHAR_SYMBOL        ('$')
 #define COMMAND_TURN_RATIO         (8)
 
-#define WIFI_COMMAND_SYMBOL        ("$\r")
+#define WIFI_COMMAND_SYMBOL        ("$")
+#define LOST_WIFI_COMMAND_SYMBOL   ("Dis")
 #define COMMAND_AKNOWLEDGE         ("~~")
 #define AKNOWLEDGE_MESSAGE         ("Good News Everyone!\n\r")
 #define SLOW_BAUD                  ("~S")
