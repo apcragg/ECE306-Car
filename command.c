@@ -127,6 +127,9 @@ void receive_command(char* command)
     display_3 = CLEAR_LINE;
     display_4 = CLEAR_LINE;
     
+    set_motor_speed(R_FORWARD, (int) (MAX_SPEED * 0.87f));
+    set_motor_speed(L_FORWARD, MAX_SPEED);
+    
     lcd_BIG_mid();
     five_msec_delay(QUARTER_SECOND);
     Display_Process();
@@ -134,10 +137,10 @@ void receive_command(char* command)
     uca0_transmit_message("SUCCESS", NO_OFFSET);    
      
     turn_on_motor(R_FORWARD);
-    five_msec_delay(TURN_ON_COMP);
     turn_on_motor(L_FORWARD);
     
-    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]));
+    if(CH_TO_DIG(command[COMMAND_TIME_POS]) <= 9)
+      five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
     
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_FORWARD);
@@ -191,7 +194,8 @@ void receive_command(char* command)
     turn_on_motor(R_REVERSE);
     turn_on_motor(L_FORWARD);
     
-    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
+    if(CH_TO_DIG(command[COMMAND_TIME_POS]) <= 9)
+      five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
     
     turn_off_motor(R_REVERSE);
     turn_off_motor(L_FORWARD);
@@ -213,12 +217,13 @@ void receive_command(char* command)
     five_msec_delay(QUARTER_SECOND);
     Display_Process();
     
-     uca0_transmit_message("SUCCESS", NO_OFFSET);    
+    uca0_transmit_message("SUCCESS", NO_OFFSET);    
      
     turn_on_motor(R_FORWARD);
     turn_on_motor(L_REVERSE);
     
-    five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
+     if(CH_TO_DIG(command[COMMAND_TIME_POS]) <= 9)
+      five_msec_delay(SECOND * CH_TO_DIG(command[COMMAND_TIME_POS]) / COMMAND_TURN_RATIO);
     
     turn_off_motor(R_FORWARD);
     turn_off_motor(L_REVERSE);
@@ -227,5 +232,9 @@ void receive_command(char* command)
      
      if(command[COMMAND_LENGTH] == COMMAND_CHAR_SYMBOL)
        receive_command(command + COMMAND_LENGTH);
+  }
+  else if(find(CAR_LINE_FOLLOW, temp_command))
+  {
+    is_follow_running = is_follow_running ? FALSE : TRUE;
   }
 }

@@ -31,7 +31,7 @@ typedef unsigned char bool;
 #define INVALID                 (-1)
 #define NIBBLE                  (0xF)
 #define NIBBLE_SIZE             (4)
-#define BYTE_SIZE               (4)
+#define BYTE_SIZE               (8)
 #define INCREMENT               (1)
 #define ABS(X)                  ((X) > 0 ? (X) : (-1 * (X)))
 #define NULL                    (0)
@@ -158,11 +158,12 @@ typedef unsigned char bool;
 #define TIMER_A4                (0x04) // Timer A4
 #define TIMER_A5                (0x05) // Timer A5
 #define TIMER_A6                (0x06) // Timer A6
-#define PWM_RES                 (4096) // PWM resolution
+#define PWM_RES                 (4096*7) // PWM resolution
 
 // Motor constants
-#define MOTOR_ADJ_FAC           (.85f) // Left motor compensation
-#define MAX_SPEED               (PWM_RES)
+#define MOTOR_ADJ_FAC           (1.0f) // Left motor compensation
+#define MAX_SPEED               ((int) (PWM_RES * 1.0f))
+#define MIN_SPEED               ((int) (PWM_RES * .10f))
 #define MOTOR_SPD_OFF           (0x00) // Motor speed of zero
 #define ACTIVE_BREAK            (12)
 #define TURN_ON_COMP            (25)
@@ -209,6 +210,12 @@ typedef unsigned char bool;
 #define LEFT_DETECT             (1)
 #define TRIGGER_COUNT           (3)
 #define AVG_2                   (2)
+#define ERROR_BASELINE          (225)
+#define NO_ERROR                (0)
+#define ON_LINE                 (0)
+#define RIGHT_SIDE              (1)
+#define LEFT_SIDE               (2)
+#define MAX_LINE_SPEED          ((int) (MAX_SPEED * .375f))
 
 // Shape Constants
 #define NUM_SHAPES              (7)    // Number of possible shapes

@@ -75,12 +75,13 @@ int analog_read(int channel)
 {
   // TODO: Turn on LED, no delay needed as rise time is ~900ns per the 
   // data sheet and at 8Mhz that is < 7 1 cycle instructions
-  P1OUT |= IR_LED;
   int read_value = INVALID;
   
   ADC10CTL0 &= ~ADC10ENC;
   ADC10MCTL0 &= ~NIBBLE; // Clears Channel
   ADC10MCTL0 |= channel; // Sets Channel
+  
+  //while(pause++ < 1200);
   
   // Force completes a conversion and returns the value
   if(!(ADC10CTL1 & ADC10BUSY))
@@ -103,7 +104,6 @@ int analog_read(int channel)
   }
   
   conversion_flag = FALSE;
-  P1OUT &= ~IR_LED;
   
   return read_value;
 }

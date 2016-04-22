@@ -21,7 +21,7 @@
 #define COMMAND_TURN_RATIO         (8)
 
 #define WIFI_COMMAND_SYMBOL        ("$")
-#define LOST_WIFI_COMMAND_SYMBOL   ("Dis")
+#define LOST_WIFI_COMMAND_SYMBOL   ("Di")
 #define COMMAND_AKNOWLEDGE         ("~~")
 #define AKNOWLEDGE_MESSAGE         ("Good News Everyone!\n\r")
 #define SLOW_BAUD                  ("~S")
@@ -52,5 +52,6 @@
 #define CAR_BACKWARD               ("$B")
 #define CAR_RIGHT                  ("$R")
 #define CAR_LEFT                   ("$L")
+#define CAR_LINE_FOLLOW            ("$C")
 
 #endif

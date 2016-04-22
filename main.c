@@ -36,6 +36,7 @@ char posL1;
 char posL2;
 char posL3;
 char posL4;
+bool is_follow_running;
 
 void setup_pwm(void);
 
@@ -55,6 +56,7 @@ void main(void){
   Init_LCD();  
   setup_sw_debounce();
   init_adc();
+  P1OUT |= IR_LED;
   init_serial_uart();
   
   WDTCTL = WDTPW + WDTHOLD;
@@ -63,32 +65,31 @@ void main(void){
   
   set_motor_speed(R_FORWARD, PWM_RES);
   set_motor_speed(L_FORWARD, PWM_RES);
-  
-  display_1 = "Andrew C";
-  posL1 = DISPLAY_LINE_0;
-  display_2 = "ECE306";
-  posL2 = DISPLAY_LINE_0;
-  display_3 = "";
-  posL3 = DISPLAY_LINE_0;
-  display_4 = "";
-  posL4 = DISPLAY_LINE_0;
-  Display_Process();
 
   unsigned int time_sequence  = START_VAL;      // counter for switch loop
   unsigned int previous_count = START_VAL;      // automatic variable for
                                                 // comparing timer_count
+  unsigned int display_count = START_VAL;
+  
+  is_follow_running = FALSE;
   
 //------------------------------------------------------------------------------
 // Begining of the "While" Operating System
 //------------------------------------------------------------------------------
   while(ALWAYS) {                            // Can the Operating system run
 
-    if(!(time_sequence % QUARTER_SECOND))
+    if(get_timer_count() > display_count + QUARTER_SECOND)
+    {
+      display_count = get_timer_count();
       Display_Process();
+      time_sequence = START_VAL;
+    }
     
     update_switches();                 // Check for switch state change
     update_menu();
 
+    if(is_follow_running)
+      run_follow();
     
     if(uca0_is_message_received())
     {
@@ -118,7 +119,7 @@ void main(void){
     
     if(current_timer_count > previous_count)
     {
-      previous_count = current_timer_count;
+      previous_count = current_timer_count % UINT_16_MAX;
       time_sequence++;
     } 
    }

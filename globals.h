@@ -26,3 +26,4 @@ extern char line_buffer1[DISPLAY_LENGTH];
 extern char line_buffer2[DISPLAY_LENGTH];
 extern char line_buffer3[DISPLAY_LENGTH];
 extern char line_buffer4[DISPLAY_LENGTH];
+extern bool is_follow_running;

@@ -15,7 +15,7 @@
     static u_int8 current_menu = MENU_WIFI;
     static u_int8 menu_pressed_count = START_ZERO;
     static char buffer[DISPLAY_LENGTH] = "0";
-    static const u_int8 num_menu_options[NUM_MAIN_OPTIONS] = {5, 3, 4, 5, 1};
+    static const u_int8 num_menu_options[NUM_MAIN_OPTIONS] = {5, 4, 4, 5, 1};
     static long int current_time = START_ZERO;
 //------------------------------------------------------------------------------
  
@@ -40,7 +40,7 @@
     {
       "Set 9600",
       "Set 115200",
-      " ",
+      "Follow Line",
       " "
     };
     static char* const line_menu_options[NUM_LCD_LINES] = 
@@ -99,16 +99,25 @@ void update_menu()
     display_1 = line_menu_options[ARR_POS_0];
     display_2 = line_menu_options[ARR_POS_1];
     display_3 = line_menu_options[ARR_POS_2];
-    display_4 = buffer; 
+    display_3 = buffer; 
        
-    adc_val = (analog_read(ADC0) + analog_read(ADC1)) / DIVIDE_BY_TWO;
+    adc_val = (analog_read(ADC0));
   
-    buffer[ARR_POS_1] = '0';
-    buffer[ARR_POS_2] = 'x';
-    buffer[ARR_POS_3] = HEX_TO_CH((adc_val >> BYTE_SIZE  ) & NIBBLE);
-    buffer[ARR_POS_4] = HEX_TO_CH((adc_val >> NIBBLE_SIZE) & NIBBLE);
-    buffer[ARR_POS_5] = HEX_TO_CH((adc_val)                & NIBBLE);
-    buffer[ARR_POS_6] = NULL_TERM;
+    buffer[ARR_POS_0] = '0';
+    buffer[ARR_POS_1] = 'x';
+    buffer[ARR_POS_2] = HEX_TO_CH((adc_val >> BYTE_SIZE  ) & NIBBLE);
+    buffer[ARR_POS_3] = HEX_TO_CH((adc_val >> NIBBLE_SIZE) & NIBBLE);
+    buffer[ARR_POS_4] = HEX_TO_CH((adc_val)                & NIBBLE);
+   // buffer[ARR_POS_5] = NULL_TERM;
+    
+    adc_val = (analog_read(ADC1));
+    
+    buffer[5] = '0';
+    buffer[6] = 'x';
+    buffer[7] = HEX_TO_CH((adc_val >> BYTE_SIZE  ) & NIBBLE);
+    buffer[8] = HEX_TO_CH((adc_val >> NIBBLE_SIZE) & NIBBLE);
+    buffer[9] = HEX_TO_CH((adc_val)                & NIBBLE);
+    buffer[10] = NULL_TERM;
     break;
     case MENU_SHAPES:
     display_1 = shape_menu_options[ARR_POS_0];
@@ -121,7 +130,7 @@ void update_menu()
     {
       int i;
       uca1_transmit_message(GET_WIFI_IP_COMMAND, NO_OFFSET);
-      five_msec_delay(QUARTER_SECOND / DIVIDE_BY_TWO); 
+      five_msec_delay((QUARTER_SECOND / DIVIDE_BY_TWO) / DIVIDE_BY_TWO); 
       BufferString a = uca1_read_buffer(FALSE);
       a.offset += IP_STATUS_OFFSET;
       
@@ -146,15 +155,6 @@ void update_menu()
       display_4 = line_buffer4;
       
       current_time = system_time;
-      /*int count = START_ZERO; 
-      BufferString read_buff = uca1_read_buffer(FALSE);
-      while(read_buff.head[(read_buff.offset + count) % BUFF_SIZE] != '\0')
-      {
-        if(find("ipaddr", 
-                read_buff.head + ((read_buff.offset + count) % BUFF_SIZE)))
-          display_1 = "FOUND IT!";
-      }
-      */
     }
     break;
     default:
@@ -241,7 +241,7 @@ void menu_handle_input(u_int8 sw_pressed)
         }
         else if(menu_pressed_count == RUN_BASIC_OPTION)
         {
-          run_basic();
+          is_follow_running = TRUE;
         }
         else
         {
@@ -251,14 +251,7 @@ void menu_handle_input(u_int8 sw_pressed)
       break;
        case MENU_SHAPES:
         {
-          set_motor_speed(L_FORWARD, (int) (MAX_SPEED));
-          set_motor_speed(R_FORWARD, (int) (MAX_SPEED));
-  
-          turn_on_motor(R_FORWARD);
-          turn_on_motor(L_FORWARD);
-          
-          current_menu = MENU_MAIN;        
-          menu_pressed_count = MENU_MAIN;
+        
         }
       break;
       case MENU_WIFI:
